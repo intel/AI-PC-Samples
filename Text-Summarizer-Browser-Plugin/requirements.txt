@@ -1,6 +1,6 @@
 flask==3.1.1
 flask_cors==6.0.1
-langchain==0.3.26
+langchain==0.3.27
 langchain-community==0.3.27
 sentence-transformers==5.0.0
 langchain_chroma==0.2.5
