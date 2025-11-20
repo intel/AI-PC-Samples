@@ -1,6 +1,6 @@
 langchain==0.3.24
 langchain-community==0.3.27
-langchain-core==0.3.56
+langchain-core==0.3.80
 langchain-huggingface==0.1.2
 huggingface-hub==0.29.1
 sentence-transformers==3.4.1
