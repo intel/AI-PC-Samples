@@ -1,5 +1,5 @@
 amadeus==12.0.0
-ipykernel==7.0.1
+ipykernel==7.1.0
 jupyter==1.1.1
 langchain==1.0.2
 langchain-community==0.4.1
