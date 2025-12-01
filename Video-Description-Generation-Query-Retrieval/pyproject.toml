@@ -1,33 +1,18 @@
 [project]
-name = "video-description-generation-query-retrieval"
+name = "video-rag-ollama"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Video RAG application using Ollama vision models for semantic video search"
+readme = "README_Ollama.md"
 requires-python = ">=3.12.0"
 dependencies = [
-    "torch>=2.7.0",
-    "torchvision>=0.22.0",
-    "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
-    "jupyter>=1.1.1",
+    "ollama>=0.4.0",
+    "streamlit>=1.30.0",
     "chromadb>=1.0.12",
-    "huggingface_hub[hf_xet]>=0.32.3",
-    "qwen-vl-utils[decord]>=0.0.11",
     "sentence-transformers>=4.1.0",
-    "transformers>=4.52.4",
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0",
+    "tqdm>=4.65.0",
+    "jupyter>=1.1.1",
+    "ipykernel>=6.25.0",
+    "ipywidgets>=8.1.0",
 ]
-
-[tool.uv.sources]
-torch = [
-  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
-]
-torchvision = [
-  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
-]
-pytorch-triton-xpu = [
-  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
-]
-
-[[tool.uv.index]]
-name = "pytorch-xpu"
-url = "https://download.pytorch.org/whl/xpu"
-explicit = true
