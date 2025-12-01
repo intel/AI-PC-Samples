@@ -1,9 +1,16 @@
-# Video Description Generation and Query Retrieval
+# Video Description Generation and Query Retrieval with Ollama
 ## Introduction
 
-This sample demonstrates how to generate video descriptions using the [**Qwen 2.5 Vision-Language model**](https://github.com/QwenLM/Qwen2.5-VL) and store their embeddings in [**ChromaDB**](https://www.trychroma.com/) for efficient semantic search on **Intel® Core™ Ultra Processors**. The Qwen 2.5 Vision-Language model is loaded using the [**PyTorch XPU backend**](https://docs.pytorch.org/docs/stable/notes/get_start_xpu.html) to leverage Intel hardware acceleration.\
-For each video, a description is generated and stored as an embedding in ChromaDB. When a user submits a query, cosine similarity search is performed in ChromaDB to retrieve the most relevant video description. The matching video is then displayed inline.\
+This sample demonstrates how to generate video descriptions using [**Ollama**](https://ollama.ai) vision models and store their embeddings in [**ChromaDB**](https://www.trychroma.com/) for efficient semantic search on **Intel® Core™ Ultra Processors** and **Intel® Arc™ Graphics**.
+
+Ollama provides an optimized runtime for vision-language models (Qwen 2.5 VL, Llama 3.2 Vision, LLaVA) with simplified deployment on Intel GPUs. For each video, a description is generated and stored as an embedding in ChromaDB. When a user submits a query, cosine similarity search is performed in ChromaDB to retrieve the most relevant video description.
+
 This sample uses the videos from the [**stepfun-ai/Step-Video-T2V-Eval**](https://huggingface.co/datasets/stepfun-ai/Step-Video-T2V-Eval) Hugging Face dataset. For more information on the dataset and citation requirements, please refer to the [**Step-Video-T2V Technical Report paper**](https://arxiv.org/abs/2502.10248).
+
+### Available Interfaces:
+
+- `Video_RAG_Ollama.ipynb` - Jupyter notebook implementation
+- `st_video_rag_demo.py` - Streamlit web interface
 
 ---
 
@@ -25,12 +32,59 @@ This sample uses the videos from the [**stepfun-ai/Step-Video-T2V-Eval**](https:
 
 ## Architecture
 
-- During the initial data load, videos from the [Step-Video-T2V-Eval](https://huggingface.co/datasets/stepfun-ai/Step-Video-T2V-Eval) Hugging Face dataset is fed into the [Qwen 2.5 Vision-Language model](https://github.com/QwenLM/Qwen2.5-VL).
-- Here, the [Qwen2.5-VL-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct) model variant is used to process these videos and generate descriptions. The Qwen 2.5 Vision-Language model is loaded using the [PyTorch XPU backend](https://docs.pytorch.org/docs/stable/notes/get_start_xpu.html) to leverage Intel hardware acceleration.
-- Next, the generated video descriptions are converted into embeddings using [Sentence Transformers](https://sbert.net/), with the [all-MiniLM-L6-v2 model](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2).
-- These embeddings, along with the descriptions and video metadata, are stored in a persistent local [ChromaDB](https://www.trychroma.com/) collection. This is a one-time operation; since ChromaDB is local and persistent, it does not need to be repeated unless new videos are added.
-- When a user submits a query, the text is similarly encoded into an embedding, which is then used to perform a semantic search (via cosine similarity) over the ChromaDB collection.
-- The final result will be the most relevant video description and its associated video file name, and the video is displayed directly in the notebook.
+### System Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    VIDEO PROCESSING PIPELINE                        │
+└─────────────────────────────────────────────────────────────────────┘
+                                    
+Video Files ──► Frame Extraction ──► Ollama Vision Model ──► Text Descriptions
+                                            │
+                                            │ (Accelerated by Intel GPUs)
+                                            ▼
+                              Sentence Transformer ──► ChromaDB Storage
+                                                              │
+┌─────────────────────────────────────────────────────────────┘
+│                    SEARCH PIPELINE                              
+└─────────────────────────────────────────────────────────────────────┐
+                                                                      │
+User Query ──► Query Embedding ──► Cosine Similarity ◄────────────────┘
+                                           │
+                                           ▼
+                                   Ranked Results ──► Display Videos
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  Hardware: Intel Arc™ Graphics | Core™ Ultra | Iris® Xe Graphics   │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Workflow Details
+
+**Video Processing Pipeline:**
+
+1. **Video Input**: Videos from [Step-Video-T2V-Eval](https://huggingface.co/datasets/stepfun-ai/Step-Video-T2V-Eval) dataset
+2. **Frame Extraction**: Representative frames extracted using OpenCV
+3. **Vision Model**: Ollama runtime with Qwen 2.5 VL, Llama 3.2 Vision, or LLaVA on Intel GPU
+4. **Description Generation**: Detailed text descriptions of video content
+5. **Embedding Creation**: Text → vector embeddings via [Sentence Transformers](https://sbert.net/) ([all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2))
+6. **Storage**: Embeddings + metadata stored in [ChromaDB](https://www.trychroma.com/) vector database
+
+**Search Pipeline:**
+
+1. **User Query**: Natural language text input (e.g., "person playing basketball")
+2. **Query Embedding**: Convert query to vector using same embedding model
+3. **Similarity Search**: Cosine similarity search over ChromaDB collection
+4. **Ranked Results**: Return top matching videos with similarity scores
+5. **Display**: Show videos with descriptions and match quality
+
+**Intel Hardware Optimization:**
+
+- **Intel Arc™ Graphics**: GPU acceleration for vision model inference
+- **Intel Core™ Ultra Processors**: Optimized CPU performance
+- **Intel Iris® Xe Graphics**: Integrated graphics acceleration
+- **Local Processing**: No cloud dependency, all computation on-device
+- **Ollama Runtime**: Optimized for Intel hardware
 
 ![How it works](./assets/Video_description_generation_and_query_retrieval_workflow.png)
 
@@ -39,14 +93,15 @@ This sample uses the videos from the [**stepfun-ai/Step-Video-T2V-Eval**](https:
 ## Project Structure
 
     Video-Description-Generation-Query-Retrieval/                          # Project Sample folder
-    ├── assets/                                                            # Assets folder which contains the images and diagrams
-    │   ├── Generating_video_descriptions_using_Pytorch_XPU.png            # Output screenshot image 1
-    │   ├── Video_description_generation_and_query_retrieval_workflow.jpg  # Workflow image
-    │   └── Video_display.png                                              # Output screenshot image 2
-    ├── Readme.md                                                          # Readme file which contains all the details and instructions about the project sample
-    ├── Video_Description_Generation_Query_Retrieval.ipynb                 # Notebook file to excute the project sample
-    ├── pyproject.toml                                                     # Requirements for the project sample
-    └── uv.lock                                                            # File which captures the packages installed for the project sample
+    ├── assets/                                                            # Assets folder with images and diagrams
+    │   ├── Generating_video_descriptions_using_Pytorch_XPU.png            # PyTorch XPU output screenshot
+    │   ├── Video_description_generation_and_query_retrieval_workflow.jpg  # Workflow diagram
+    │   └── Video_display.png                                              # Video display screenshot
+    ├── Readme.md                                                          # Main README
+    ├── Video_RAG_Ollama.ipynb                                             # Ollama-based notebook
+    ├── st_video_rag_demo.py                                               # Streamlit web interface
+    ├── pyproject.toml                                                     # UV/pip requirements
+    └── uv.lock                                                            # UV lock file
 
 ---
 
@@ -81,33 +136,79 @@ Please find the some of the keywords below used in the prompts across 11 differe
 
 ### For Windows:
 To install any software using commands, Open the Command Prompt as an administrator by right-clicking the terminal icon and selecting `Run as administrator`.
+
 1. **GPU Drivers installation**\
    Download and install the Intel® Graphics Driver for Intel® Arc™ B-Series, A-Series, Intel® Iris® Xe Graphics, and Intel® Core™ Ultra Processors with Intel® Arc™ Graphics from [here](https://www.intel.com/content/www/us/en/download/785597/intel-arc-iris-xe-graphics-windows.html)\
    **IMPORTANT:** Reboot the system after the installation.
 
-2. **Git for Windows**\
+2. **Ollama Installation**\
+   Download and install Ollama from [https://ollama.com/download](https://ollama.com/download) or use the command:
+   ```powershell
+   winget install Ollama.Ollama
+   ```
+
+   **Building Ollama with GPU Support (Vulkan)**\
+   For advanced users who want to build Ollama from source with Vulkan GPU acceleration:
+
+   a. **Install Vulkan SDK**
+   - Download and install from [https://vulkan.lunarg.com/sdk/home](https://vulkan.lunarg.com/sdk/home)
+   
+   b. **Install TDM-GCC**
+   - Download and install from [https://github.com/jmeubank/tdm-gcc/releases/tag/v10.3.0-tdm64-2](https://github.com/jmeubank/tdm-gcc/releases/tag/v10.3.0-tdm64-2)
+   
+   c. **Install Go SDK**
+   - Download and install Go v1.24.9 from [https://go.dev/dl/go1.24.9.windows-amd64.msi](https://go.dev/dl/go1.24.9.windows-amd64.msi)
+   
+   d. **Build Ollama with Vulkan**
+   ```powershell
+   # Set environment variables
+   set CGO_ENABLED=1
+   set CGO_CFLAGS=-IC:\VulkanSDK\1.4.321.1\Include
+   
+   # Build with CMake
+   cmake -B build
+   cmake --build build --config Release -j14
+   
+   # Build Go binary
+   go build
+   
+   # Run Ollama server (Terminal 1)
+   go run . serve
+   
+   # Test with a model (Terminal 2)
+   ollama run gemma3:270m
+   ```
+
+3. **Git for Windows**\
    Download and install Git from [here](https://git-scm.com/downloads/win)
 
-3. **uv for Windows**\
+4. **uv for Windows**\
    Steps to install `uv` in the Command Prompt are as follows. Please refer to the [documentation](https://docs.astral.sh/uv/getting-started/installation/) for more information.
-   ```
+   ```powershell
    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
    ```
    **NOTE:** Close and reopen the Command Prompt to recognize uv.
    
 ### For Linux:
 To install any software using commands, Open a new terminal window by right-clicking the terminal and selecting `New Window`.
+
 1. **GPU Drivers installation**\
    Download and install the GPU drivers from [here](https://dgpu-docs.intel.com/driver/client/overview.html)
 
-2. **Dependencies on Linux**\
+2. **Ollama Installation**\
+   Install Ollama using the official script:
+   ```bash
+   curl -fsSL https://ollama.com/install.sh | sh
+   ```
+
+3. **Dependencies on Linux**\
    Install Curl, Wget, Git using the following commands:
    - For Debian/Ubuntu-based systems:
-   ```
+   ```bash
    sudo apt update && sudo apt -y install curl wget git
    ```
    - For RHEL/CentOS-based systems:
-   ```
+   ```bash
    sudo dnf update && sudo dnf -y install curl wget git
    ```
 
@@ -125,50 +226,89 @@ To install any software using commands, Open a new terminal window by right-clic
 
 ---
 
-## Running the Sample && execution output
-   
-1. In the Command Prompt/terminal, navigate to `Video-Description-Generation-Query-Retrieval` folder after cloning the sample:
-   ```
+## Running the Sample
+
+### Quick Start with Streamlit (Recommended)
+
+1. **Navigate to project folder:**
+   ```bash
    cd <path/to/Video-Description-Generation-Query-Retrieval/folder>
    ```
+
+2. **Pull an Ollama vision model:**
+   ```bash
+   ollama pull qwen2.5-vl
+   # OR
+   ollaa pull qwen3-vl:latest
+   # OR
+   ollama pull llama3.2-vision
+   # OR  
+   ollama pull llava
+   ```
+
+3. **Download the video dataset:**
    
-2. Log in to Hugging Face, generate a token, and download the required models and datasets:\
-   `huggingface-cli` lets you interact directly with the Hugging Face Hub from a terminal. Log in to [Huggingface](https://huggingface.co/) with your credentials. You need a [User Access Token](https://huggingface.co/docs/hub/security-tokens) from your [Settings page](https://huggingface.co/settings/tokens). The User Access Token is used to authenticate your identity to the Hub.\
-   Once you have your token, run the following command in your terminal.
-   ```
+   Log in to [Huggingface](https://huggingface.co/) and get a [User Access Token](https://huggingface.co/docs/hub/security-tokens) from your [Settings page](https://huggingface.co/settings/tokens).
+   
+   ```bash
    uv run huggingface-cli login
-   ```
-   This command will prompt you for a token. Copy-paste yours and press Enter.
-   ```
-   uv run huggingface-cli download Qwen/Qwen2.5-VL-3B-Instruct
-   uv run huggingface-cli download sentence-transformers/all-MiniLM-L6-v2
    uv run huggingface-cli download stepfun-ai/Step-Video-T2V-Eval --repo-type dataset --local-dir ./Step-Video-T2V-Eval
    ```
 
-3. Launch Jupyter Lab and Run the notebook:\
-   Open the [Video Description Generation Query Retrieval](./Video_Description_Generation_Query_Retrieval.ipynb) notebook in the Jupyter Lab.
-   - In the Jupyter Lab go to the kernel menu in the top-right corner of the notebook interface and choose default kernel i.e. `Python 3 (ipykernel)` from the available kernels list and run the code cells one by one in the notebook.
+4. **Launch the Streamlit application:**
+   ```bash
+   uv run streamlit run st_video_rag_demo.py
    ```
+   
+   The app will open in your browser at `http://localhost:8501`
+
+5. **Use the application:**
+   - Go to "Process Videos" tab
+   - Configure settings (model, dataset folder, max videos)
+   - Click "Start Processing" 
+   - Once complete, go to "Search Videos" tab
+   - Enter natural language queries to find videos
+
+### Alternative: Jupyter Notebook
+
+1. **Install dependencies:**
+   ```bash
+   uv sync
+   ```
+
+2. **Launch Jupyter Lab:**
+   ```bash
    uv run jupyter lab
    ```
-   - If you are running the sample in the [Intel Tiber AI Cloud(ITAC)](https://ai.cloud.intel.com/), follow these steps in a new terminal session. Create and select the `uv_env` Jupyter kernel to get access to required python packages in the notebook.
-   ```
-   uv sync
-   uv run python -m ipykernel install --user --name=uv_env --display-name="uv_env"
-   ```
+   
+   Open `Video_RAG_Ollama.ipynb` and run cells sequentially.
 
-4. GPU utilization can be seen in the Task Manager while generating video descriptions for videos which are processing on Intel XPUs.
-   ![Generating_video_descriptions_using_Pytorch_XPU](./assets/Generating_video_descriptions_using_Pytorch_XPU.png)
-
-5. Relevant video will be displayed based on user query.
-   ![Video_display](./assets/Video_display.png)
+3. **Expected Output:**
+   
+   - GPU utilization can be monitored in Task Manager (Windows) or nvidia-smi/intel_gpu_top (Linux)
+   - Processing 128 videos typically takes 10-60 minutes depending on hardware
+   - Search queries return results in < 100ms
+   - Videos displayed with similarity scores and descriptions
 
 ---
 
 ## Troubleshooting
 
-- **Dependency Issues:** Run `uv clean` and then `uv sync`.
-- **File Access Issues:** Restart the kernel and run the cells again.
+**Ollama Issues:**
+- **Ollama not accessible:** Check if Ollama is running with `ollama list`. Start with `ollama serve` if needed.
+- **No vision model:** Pull a vision model: `ollama pull qwen2.5-vl` or `ollama pull llama3.2-vision`
+- **Model too slow:** Try a smaller model like `llava` for faster inference
+
+**Application Issues:**
+- **Dependency Issues:** Run `uv clean` and then `uv sync`
+- **No videos found:** Ensure video folder path is correct and contains .mp4/.avi/.mov files
+- **Database errors:** Delete `Video_descriptions_database_ollama` folder and reprocess
+- **Poor search results:** Check that descriptions are detailed (view in "View All Descriptions" section)
+
+**Performance:**
+- **Slow processing:** Reduce number of videos or use a faster model
+- **Out of memory:** Process fewer videos at once or use a smaller model
+- **GPU not utilized:** Ensure Intel GPU drivers are installed and Ollama is using GPU
 
 ---
 

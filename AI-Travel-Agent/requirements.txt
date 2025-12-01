@@ -2,7 +2,7 @@ amadeus==12.0.0
 ipykernel==7.0.1
 jupyter==1.1.1
 langchain==1.0.2
-langchain-community==0.3.27
+langchain-community==0.4.1
 streamlit==1.51.0
 huggingface-hub==1.1.4
 pydantic==2.12.3

@@ -13,7 +13,8 @@ def load_models():
         list: A list of model names if successful, otherwise an empty list.
     """
     try:
-        model_list = [model["name"] for model in ollama.list()["models"]]
+        response = ollama.list()
+        model_list = [model.model for model in response.models]
         return model_list
     except Exception as e:
         st.error(f"Error loading models: {e}")
