@@ -6,4 +6,4 @@ sentence-transformers==5.0.0
 langchain_chroma==1.0.0
 pypdf==6.4.0
 optimum[openvino,nncf]
-ipykernel==7.0.1
+ipykernel==7.1.0
