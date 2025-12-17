@@ -16,7 +16,7 @@ dependencies = [
     "torchinfo>=1.8.0",
     "plotly>=6.0.0",
     "ffmpeg-python>=0.2.0",
-    "torch==2.7.1",
+    "torch==2.8.0",
     "certifi==2025.4.26",
     "h11==0.16.0",
     "idna==3.10",
