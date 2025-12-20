@@ -1,6 +1,6 @@
 # GenAI AI-PC-Samples
 
-Welcome to the AI PC GenAI Samples Repository.This repository features a curated collection of notebooks designed to demonstrate generative AI workloads on AI PCs. These notebooks are designed to be accessible to a broad audience, including AI creators, artists, engineers, and those who are just curious about Generative AI
+Welcome to the AI PC GenAI Samples Repository. This repository features a curated collection of notebooks designed to demonstrate generative AI workloads on AI PCs. These notebooks are designed to be accessible to a broad audience, including AI creators, artists, engineers, and those who are just curious about Generative AI
 
 ## Table of Contents
 - LLM
