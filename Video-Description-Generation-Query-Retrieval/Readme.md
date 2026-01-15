@@ -128,7 +128,7 @@ Please find the some of the keywords below used in the prompts across 11 differe
 |   ------   |   ------   |
 |   Operating System(OS)   |   Windows 11 or later/ Ubuntu 20.04 or later   |
 |   Random-access memory(RAM)   |   32 GB   |
-|   Hardware   |   Intel® Core™ Ultra Processors, Intel Arc™ Graphics, Intel Graphics, Intel® Xeon® Processor, Intel® Data Center GPU Max Series   |
+|   Hardware   |   Intel® Core™ Ultra Processors, Intel Arc™ Graphics, Intel Graphics, Intel® Xeon® Processor   |
 
 ---
 

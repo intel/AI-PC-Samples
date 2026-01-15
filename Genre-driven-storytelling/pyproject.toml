@@ -1,16 +1,16 @@
 [project]
 name = "genredrivenstorytelling"
 version = "0.1.0"
-description = "Add your description here"
+description = "Create a story based on a chosen genre using vision-language models."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13, <3.14"
 dependencies = [
-  "torch>=2.7.0",
-  "torchvision>=0.22.0",
-  "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
-  "transformers==4.53.1",
-  "jupyter==1.1.1",
-  "ipywidgets==8.1.7",
+  "torch>=2.9.1",
+  "torchvision>=0.24.1",
+  "pytorch-triton-xpu>=3.5.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
+  "transformers>=4.53.1",
+  "jupyter>=1.1.1",
+  "ipywidgets>=8.1.7",
   "qwen-vl-utils>=0.0.11",
   "matplotlib>=3.10.3",
 ]
