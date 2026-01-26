@@ -5,8 +5,8 @@ langchain-huggingface==0.1.2
 huggingface-hub>=0.30.0
 sentence-transformers==3.4.1
 chromadb==0.6.3
-transformers==4.53.1
-pypdf==6.4.0
-torch==2.8.0
+transformers==4.57.6
+pypdf==6.6.0
+torch==2.9.1
 langchain-chroma==0.2.2
 beautifulsoup4==4.13.3
