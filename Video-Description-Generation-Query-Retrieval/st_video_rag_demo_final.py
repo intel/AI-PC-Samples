@@ -230,14 +230,33 @@ def generate_video_description_ollama(video_path, model, max_tokens=100, tempera
 
 
 def get_video_paths(folder, max_count):
-    """Get video file paths from folder."""
+    """Get video file paths from folder, ensuring path is under DATASET_ROOT."""
     try:
         video_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv']
         video_files = []
         
-        folder_path = os.path.abspath(folder)
-        
-        for root, dirs, files in os.walk(folder_path):
+        # Combine root and user-supplied folder, normalize
+        abs_root = DATASET_ROOT
+        abs_folder = os.path.abspath(os.path.join(abs_root, folder))
+        # Ensure resulting path is within the root directory
+        if not abs_folder.startswith(abs_root):
+            logging.error(f"Attempted access to outside datasets root: {abs_folder}")
+            # Use Streamlit to warn user if in Streamlit context
+            try:
+                import streamlit as st
+                st.error("❌ Invalid folder: Access outside permitted dataset directory is not allowed.")
+            except ImportError:
+                pass
+            return []
+        if not os.path.isdir(abs_folder):
+            logging.error(f"Dataset folder does not exist: '{abs_folder}'")
+            try:
+                import streamlit as st
+                st.error(f"❌ Dataset folder does not exist: '{abs_folder}'")
+            except ImportError:
+                pass
+            return []
+        for root, dirs, files in os.walk(abs_folder):
             video_files.extend([
                 os.path.join(root, f) for f in files 
                 if any(f.lower().endswith(ext) for ext in video_extensions)
