@@ -2,7 +2,7 @@ flask==3.1.2
 flask_cors==6.0.2
 langchain==1.2.7
 langchain-community==0.4.1
-sentence-transformers==5.2.0
+sentence-transformers==5.2.2
 langchain_chroma==1.1.0
 pypdf==6.6.0
 optimum[openvino,nncf]
