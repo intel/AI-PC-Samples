@@ -4,6 +4,6 @@ langchain==1.2.7
 langchain-community==0.4.1
 sentence-transformers==5.2.2
 langchain_chroma==1.1.0
-pypdf==6.6.2
+pypdf==6.7.0
 optimum[openvino,nncf]
 ipykernel==7.1.0
