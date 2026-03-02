@@ -17,7 +17,7 @@ dependencies = [
     "plotly>=6.0.0",
     "ffmpeg-python>=0.2.0",
     "torch==2.8.0",
-    "certifi==2025.4.26",
+    "certifi>=2024.0.0",
     "h11==0.16.0",
     "idna==3.10",
     "jinja2==3.1.6",
@@ -39,6 +39,7 @@ dev = [
 [[tool.uv.index]]
 name = "pytorch"
 url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.uv.sources]
 torch = { index = "pytorch" }
