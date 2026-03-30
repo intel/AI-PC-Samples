@@ -23,7 +23,7 @@ dependencies = [
     "jinja2==3.1.6",
     "jupyterlab==4.4.8",
     "notebook==7.4.1",
-    "requests==2.32.4",
+    "requests==2.33.0",
     "urllib3==2.6.3"
 ]
 
