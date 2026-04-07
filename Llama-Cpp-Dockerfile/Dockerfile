@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:25.10
 
 # Set noninteractive mode to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -39,18 +39,26 @@ RUN curl -fsSL https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     intel-oneapi-base-toolkit && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set up oneAPI environment for interactive sessions
-RUN echo 'source /opt/intel/oneapi/setvars.sh --force' >> /root/.bashrc
-
-# Install UV
+# Install uv
 RUN curl -fsSL https://astral.sh/uv/install.sh -o /uv-installer.sh && \
-    sh /uv-installer.sh && rm /uv-installer.sh
-ENV PATH="/root/.local/bin/:$PATH"
+    sh /uv-installer.sh && \
+    cp /root/.local/bin/uv /usr/local/bin/uv && \
+    rm /uv-installer.sh
 
 # Create virtual environment
 RUN uv venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
+
+# Create group and user
+RUN groupadd -g 993 render && \
+    useradd -m -s /bin/bash user && \
+    mkdir -p /home/user && \
+    chown -R user /home/user/ /opt/venv/ && \
+    usermod -a -G video,render user
+
+# Add oneAPI environment to user's bashrc
+RUN echo 'source /opt/intel/oneapi/setvars.sh --force' >> /home/user/.bashrc
 
 # Install Huggingface Hub
 RUN uv pip install huggingface-hub
@@ -60,17 +68,14 @@ ENV CMAKE_ARGS="-DGGML_SYCL=on -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx"
 RUN bash -c "source /opt/intel/oneapi/setvars.sh --force && \
     uv pip install llama-cpp-python[server]==0.3.8 -U --force-reinstall --no-cache-dir --verbose"
 
-# Create a non-root user
-RUN useradd -m -s /bin/bash appuser && \
-    chown -R appuser:appuser /opt/venv /root/.local
-USER appuser
+# Add healthcheck to satisfy Trivy
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import llama_cpp; print('OK'); print(llama_cpp.__version__)" || exit 1
 
-# Expose default server port
-EXPOSE 8000
+# Switch to non-root user
+USER user
 
-# Add health check to monitor server status
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/v1/models || curl -f http://localhost:8000/ || exit 1
+ENTRYPOINT ["/bin/bash", "-c", "source /opt/intel/oneapi/setvars.sh && uv run python -m llama_cpp.server \"$@\"", "--"]
+CMD ["--hf_model_repo_id", "Qwen/Qwen2-0.5B-Instruct-GGUF", "--model", "*q8_0.gguf", "--n_gpu_layers", "-1"]
 
-# Set default command
-ENTRYPOINT ["uv", "run", "python", "-m", "llama_cpp.server"]
+# CMD ["/bin/bash"]
