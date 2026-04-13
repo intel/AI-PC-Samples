@@ -8,7 +8,7 @@ dependencies = [
   "torch>=2.9.1",
   "torchvision>=0.24.1",
   "pytorch-triton-xpu>=3.5.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
-  "transformers>=4.53.1",
+  "transformers>=5.0.0rc3",
   "jupyter>=1.1.1",
   "ipywidgets>=8.1.7",
   "qwen-vl-utils>=0.0.11",
