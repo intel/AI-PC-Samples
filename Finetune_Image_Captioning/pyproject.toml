@@ -11,7 +11,7 @@ dependencies = [
     "datasets>=3.6.0",
     "jupyter>=1.1.1",
     "lab>=8.4",
-    "transformers>=4.52.3",
+    "transformers>=5.0.0rc3",
     "evaluate>=0.4.3",
     "bert-score>=0.3.13",
 ]
