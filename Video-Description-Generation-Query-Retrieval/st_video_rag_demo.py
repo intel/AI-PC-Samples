@@ -20,7 +20,7 @@ EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
 # Page config
 st.set_page_config(
-    page_title="Video RAG with Ollama on Intel GPUs", 
+    page_title="Video RAG with Ollama", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -42,15 +42,6 @@ st.markdown("""
         color: #666;
         font-size: 1.2rem;
         margin-bottom: 2rem;
-    }
-    .intel-badge {
-        background: linear-gradient(90deg, #0071c5 0%, #00c7fd 100%);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: bold;
-        display: inline-block;
-        margin: 0.5rem;
     }
     .metric-card {
         background: #f0f2f6;
@@ -87,7 +78,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="main-header">🎥 Video RAG: Semantic Video Search</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Powered by Ollama on Intel® Arc™ & Core™ Ultra Processors</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-header">Powered by Ollama on Intel® Core™ Ultra Processors</div>', unsafe_allow_html=True)
 
 # Initialize session state
 if "collection" not in st.session_state:
@@ -106,7 +97,7 @@ with st.sidebar:
     
     st.header("⚙️ Configuration")
     
-    # Model selection - show all models
+    # Model selection
     try:
         response = ollama.list()
         all_models = [model.model for model in response.models]
@@ -149,7 +140,7 @@ with st.sidebar:
     
     # Dataset configuration
     st.subheader("📁 Dataset")
-    dataset_folder = st.text_input("Video Folder", ".")
+    dataset_folder = st.text_input("Video Folder", "Step-Video-T2V-Eval")
     max_videos = st.slider("Max Videos", 1, 128, 20)
     
     st.markdown("---")
@@ -169,12 +160,6 @@ with st.sidebar:
                 st.error(f"Error: {e}")
     else:
         st.info("💾 No database found")
-    
-    st.markdown("---")
-    st.markdown("### 🚀 Intel Optimizations")
-    st.markdown("✓ Intel Arc™ Graphics")
-    st.markdown("✓ Intel Core™ Ultra")
-    st.markdown("✓ Hardware Acceleration")
 
 
 def encode_video_frame(video_path, frame_time=2.0):
@@ -208,6 +193,7 @@ def generate_video_description_ollama(video_path, model, max_tokens=100, tempera
         frame_base64 = encode_video_frame(video_path, frame_time=2.0)
         
         if not frame_base64:
+            st.warning(f"⚠️ Failed to extract frame from {os.path.basename(video_path)}")
             return "Unable to process video"
         
         response = ollama.chat(
@@ -232,11 +218,14 @@ def generate_video_description_ollama(video_path, model, max_tokens=100, tempera
             description = message.get('thinking', '')
         
         if not description or len(description.strip()) == 0:
+            st.error(f"❌ Empty response from model for {os.path.basename(video_path)}")
             return "Empty response from model"
         
+        st.success(f"✅ {os.path.basename(video_path)}: {description[:80]}...")
         return description
     except Exception as e:
         logging.error(f"Description generation error: {e}")
+        st.error(f"❌ Error: {str(e)}")
         return "Error generating description"
 
 
@@ -278,14 +267,12 @@ def initialize_database():
     except Exception as e:
         error_msg = str(e)
         
-        # Handle tenant connection issues
         if "Could not connect to tenant" in error_msg or "default_tenant" in error_msg:
             st.error(f"Database initialization error: {e}")
             st.warning("⚠️ ChromaDB database is corrupted or incompatible.")
             
             if st.button("🔄 Reset Database", type="primary"):
                 try:
-                    # Remove corrupted database
                     if os.path.exists(DATABASE_PATH):
                         shutil.rmtree(DATABASE_PATH)
                         st.success("✅ Database removed. Click 'Start Processing Videos' again.")
@@ -318,7 +305,7 @@ with tab1:
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown('<div class="metric-card"><h3>🤖 AI Model</h3><p>Qwen Vision-Language</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><h3>🤖 AI Model</h3><p>Vision-Language Models</p></div>', unsafe_allow_html=True)
     with col2:
         st.markdown('<div class="metric-card"><h3>💾 Storage</h3><p>ChromaDB Vector Store</p></div>', unsafe_allow_html=True)
     with col3:
@@ -327,7 +314,7 @@ with tab1:
     st.markdown("---")
     
     if st.button("🚀 Start Processing Videos", type="primary", use_container_width=True):
-        with st.spinner("Initializing AI models on Intel GPU..."):
+        with st.spinner("Initializing AI models..."):
             collection, embedding_model = initialize_database()
             
             if collection is None:
@@ -506,12 +493,11 @@ with tab3:
     st.header("System Architecture")
     
     st.markdown("""
-    ### Video RAG Pipeline on Intel Hardware
+    ### Video RAG Pipeline
     
-    This system demonstrates the power of Intel GPUs for AI workloads, using Ollama for efficient model inference.
+    This system demonstrates semantic video search using vision-language models and vector embeddings.
     """)
     
-    # Clean architecture diagram using Streamlit columns
     st.markdown("### 🔄 System Architecture Flow")
     
     st.info("**Video Processing Pipeline** - How videos are converted to searchable descriptions")
@@ -526,7 +512,7 @@ with tab3:
     with cols[3]:
         st.markdown("### ➡️")
     with cols[4]:
-        st.markdown("### 🤖\n**Ollama Vision**\n:blue[Intel GPU]")
+        st.markdown("### 🤖\n**Ollama Vision**\nModel inference")
     with cols[5]:
         st.markdown("### ➡️")
     with cols[6]:
@@ -540,7 +526,7 @@ with tab3:
     with cols2[1]:
         st.markdown("### ➡️")
     with cols2[2]:
-        st.markdown("### 🔢\n**Embeddings**\n:blue[Transformers]")
+        st.markdown("### 🔢\n**Embeddings**\nTransformers")
     with cols2[3]:
         st.markdown("### ➡️")
     with cols2[4]:
@@ -560,7 +546,7 @@ with tab3:
     with cols3[3]:
         st.markdown("### ➡️")
     with cols3[4]:
-        st.markdown("### 🔍\n**Similarity**\n:blue[Cosine dist]")
+        st.markdown("### 🔍\n**Similarity**\nCosine dist")
     with cols3[5]:
         st.markdown("### ➡️")
     with cols3[6]:
@@ -568,7 +554,6 @@ with tab3:
     
     st.markdown("---")
     
-    # Architecture diagram
     col1, col2 = st.columns(2)
     
     with col1:
@@ -576,7 +561,7 @@ with tab3:
         st.markdown("""
         **1. Video Processing**
         - Frame extraction with OpenCV
-        - Vision model inference on Intel GPU
+        - Vision model inference
         - Description generation
         
         **2. Embedding Generation**
@@ -591,27 +576,26 @@ with tab3:
         """)
     
     with col2:
-        st.markdown("### 🚀 Intel Optimizations")
+        st.markdown("### 🚀 Features")
         st.markdown("""
-        **Hardware Acceleration**
-        - Intel Arc™ Graphics
-        - Intel Core™ Ultra Processors
-        - Intel Iris® Xe Graphics
-        
-        **Performance Benefits**
+        **Performance**
         - Fast inference times
         - Efficient memory usage
         - Local processing
         
-        **Ollama Integration**
-        - Optimized for Intel hardware
+        **Capabilities**
+        - Natural language search
+        - Semantic understanding
+        - Multi-modal analysis
+        
+        **Integration**
+        - Ollama runtime
         - Easy model management
         - Production-ready
         """)
     
     st.markdown("---")
     
-    # Technical details
     st.markdown("### 🔧 Technical Stack")
     
     col1, col2, col3 = st.columns(3)
@@ -619,8 +603,8 @@ with tab3:
     with col1:
         st.markdown("""
         **AI Models**
-        - Qwen 2.5 VL
-        - Llama 3.2 Vision
+        - Qwen Vision-Language
+        - Llama Vision
         - MiniLM Embeddings
         """)
     
@@ -634,21 +618,21 @@ with tab3:
     
     with col3:
         st.markdown("""
-        **Intel Hardware**
-        - Arc™ GPUs
-        - Core™ Ultra CPUs
-        - Iris® Xe Graphics
+        **Processing**
+        - OpenCV
+        - Sentence Transformers
+        - Python Backend
         """)
 
 with tab4:
     st.header("About This Demo")
     
     st.markdown("""
-    ### 🎯 Video RAG with Ollama on Intel GPUs
+    ### 🎯 Video RAG with Ollama
     
-    This application demonstrates **semantic video search** powered by **Ollama on Intel GPUs**. 
+    This application demonstrates **semantic video search** powered by **Ollama**. 
     It combines vision-language models, vector embeddings, and similarity search to enable 
-    natural language queries over video content and detailed image understanding.
+    natural language queries over video content.
     
     ### 💡 Use Cases
     
@@ -666,14 +650,6 @@ with tab4:
     4. **Store**: Save vectors in a searchable database
     5. **Query**: Search using natural language
     6. **Retrieve**: Find most similar videos by semantic meaning
-    
-    ### 🚀 Why Intel GPUs?
-    
-    - **Performance**: Fast inference for vision models
-    - **Efficiency**: Optimized power consumption
-    - **Accessibility**: Available on mainstream devices
-    - **Local Processing**: No cloud dependency
-    - **Cost Effective**: Use existing hardware
     """)
     
     st.markdown("---")
@@ -682,21 +658,16 @@ with tab4:
     
     st.code("""
     # Core Technologies
-    - Ollama: Local LLM runtime optimized for Intel GPUs
-    - Qwen 2.5 VL: State-of-the-art vision-language model
+    - Ollama: Local LLM runtime
+    - Vision-Language Models: Qwen, Llama, etc.
     - ChromaDB: Efficient vector database
     - Sentence Transformers: Text embedding generation
     - Streamlit: Interactive web interface
-    
-    # Intel Optimizations
-    - Hardware acceleration on Arc and Iris Xe
-    - Optimized inference on Core Ultra processors
-    - Local processing without cloud dependency
+    - OpenCV: Video frame extraction
     """, language="python")
     
     st.markdown("---")
     
-    # System status
     st.markdown("### 📡 System Status")
     
     col1, col2, col3 = st.columns(3)
@@ -724,8 +695,7 @@ with tab4:
 st.markdown("---")
 st.markdown(
     '<div style="text-align: center; color: #666;">'
-    '<p>🎥 <strong>Video RAG Demo</strong> | Powered by <strong>Ollama</strong> on '
-    '<strong>Intel Arc Graphics</strong> and <strong>Intel Core Ultra Processors</strong></p>'
+    '<p>🎥 <strong>Video RAG Demo</strong> | Powered by <strong>Ollama</strong></p>'
     '</div>',
     unsafe_allow_html=True
 )

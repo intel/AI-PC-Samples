@@ -3,28 +3,30 @@ name = "ai-upscaling-with-npu"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = "==3.11.*"
+requires-python = "==3.12.*"
 dependencies = [
     "huggingface-hub>=0.28.1",
     "ipykernel>=6.29.5",
     "ipywidgets>=8.1.5",
     "jupyter>=1.1.1",
     "safetensors>=0.5.2",
-    "openvino>=2025.0.0",
+    "openvino>=2025.4.1",
     "opencv-python>=4.11.0.86",
     "nncf>=2.15.0",
     "torchinfo>=1.8.0",
     "plotly>=6.0.0",
     "ffmpeg-python>=0.2.0",
-    "torch==2.8.0",
-    "certifi>=2024.0.0",
+    "torch>=2.7.0",
+    "torchvision>=0.22.0",
+    "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
     "h11==0.16.0",
-    "idna==3.10",
     "jinja2==3.1.6",
-    "jupyterlab==4.5.7",
-    "notebook==7.5.6",
-    "requests==2.33.0",
-    "urllib3==2.7.0"
+    "jupyterlab==4.4.8",
+    "notebook==7.4.1",
+    "requests>=2.32.4",
+    "urllib3==1.26.13",
+    "streamlit>=1.40.0",
+    "pillow>=10.0.0"
 ]
 
 [dependency-groups]
@@ -36,13 +38,34 @@ dev = [
     "ruff>=0.9.6",
 ]
 
+
 [[tool.uv.index]]
 name = "pytorch"
 url = "https://download.pytorch.org/whl/cpu"
+
+[[tool.uv.index]]
+name = "pytorch-xpu"
+url = "https://download.pytorch.org/whl/xpu"
 explicit = true
 
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+
 [tool.uv.sources]
-torch = { index = "pytorch" }
+torch = [
+    { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+    { index = "pytorch", marker = "sys_platform != 'win32' and sys_platform != 'linux'" }
+]
+torchvision = [
+    { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" }
+]
+pytorch-triton-xpu = [
+    { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" }
+]
+requests = [
+    { index = "pypi" }
+]
 
 [tool.ruff]
 # Allow lines to be as long as 120.
