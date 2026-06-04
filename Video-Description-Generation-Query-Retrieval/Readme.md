@@ -147,37 +147,21 @@ To install any software using commands, Open the Command Prompt as an administra
    winget install Ollama.Ollama
    ```
 
-   **Building Ollama with GPU Support (Vulkan)**\
-   For advanced users who want to build Ollama from source with Vulkan GPU acceleration:
+   **Running Ollama on Intel GPUs (Vulkan)**\
+   To enable Intel GPU acceleration with Ollama on Windows:
 
-   a. **Install Vulkan SDK**
-   - Download and install from [https://vulkan.lunarg.com/sdk/home](https://vulkan.lunarg.com/sdk/home)
-   
-   b. **Install TDM-GCC**
-   - Download and install from [https://github.com/jmeubank/tdm-gcc/releases/tag/v10.3.0-tdm64-2](https://github.com/jmeubank/tdm-gcc/releases/tag/v10.3.0-tdm64-2)
-   
-   c. **Install Go SDK**
-   - Download and install Go v1.24.9 from [https://go.dev/dl/go1.24.9.windows-amd64.msi](https://go.dev/dl/go1.24.9.windows-amd64.msi)
-   
-   d. **Build Ollama with Vulkan**
+   a. **Download and install Vulkan Drivers**
+   - Download and install the Vulkan drivers for Windows from [https://vulkan.lunarg.com/sdk/home](https://vulkan.lunarg.com/sdk/home)
+
+   b. **Set the Vulkan environment variable**
+   - Set the user environment variable `OLLAMA_VULKAN=1` before running Ollama:
    ```powershell
-   # Set environment variables
-   set CGO_ENABLED=1
-   set CGO_CFLAGS=-IC:\VulkanSDK\1.4.321.1\Include
-   
-   # Build with CMake
-   cmake -B build
-   cmake --build build --config Release -j14
-   
-   # Build Go binary
-   go build
-   
-   # Run Ollama server (Terminal 1)
-   go run . serve
-   
-   # Test with a model (Terminal 2)
-   ollama run gemma3:270m
+   [System.Environment]::SetEnvironmentVariable("OLLAMA_VULKAN", "1", "User")
    ```
+
+   c. **Install Ollama**
+   - Download and run the Ollama installer from [https://ollama.com/download](https://ollama.com/download)
+   - Once installed with `OLLAMA_VULKAN=1` set, Ollama will automatically use your Intel GPU.
 
 3. **Git for Windows**\
    Download and install Git from [here](https://git-scm.com/downloads/win)
