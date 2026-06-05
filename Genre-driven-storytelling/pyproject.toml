@@ -15,6 +15,12 @@ dependencies = [
   "matplotlib>=3.10.3",
 ]
 
+# NOTE: Install with `uv sync`. The torch, torchvision, and
+# pytorch-triton-xpu wheels for Intel XPU live on the PyTorch XPU index
+# (https://download.pytorch.org/whl/xpu), not on PyPI. The [tool.uv.sources]
+# block below tells uv to fetch them from there. Vanilla pip does not parse
+# [tool.uv.sources] / [[tool.uv.index]] and will look for the packages on
+# PyPI instead, which won't work for the XPU variants.
 [tool.uv.sources]
 torch = [
   { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
