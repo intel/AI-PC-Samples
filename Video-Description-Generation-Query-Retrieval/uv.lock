@@ -2236,11 +2236,11 @@ wheels = [
 
 [[package]]
 name = "pygments"
-version = "2.19.1"
+version = "2.20.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7c/2d/c3338d48ea6cc0feb8446d8e6937e1408088a72a39937982cc6111d17f84/pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f", size = 4968581, upload-time = "2025-01-06T17:26:30.443Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c3/b2/bc9c9196916376152d655522fdcebac55e66de6603a76a02bca1b6414f6c/pygments-2.20.0.tar.gz", hash = "sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f", size = 4955991, upload-time = "2026-03-29T13:29:33.898Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8a/0b/9fcc47d19c48b59121088dd6da2488a49d5f72dacf8262e2790a1d2c7d15/pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c", size = 1225293, upload-time = "2025-01-06T17:26:25.553Z" },
+    { url = "https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl", hash = "sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176", size = 1231151, upload-time = "2026-03-29T13:29:30.038Z" },
 ]
 
 [[package]]
@@ -3155,6 +3155,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "chromadb" },
+    { name = "filelock" },
     { name = "gitpython" },
     { name = "idna" },
     { name = "ipykernel" },
@@ -3169,6 +3170,7 @@ dependencies = [
     { name = "pillow" },
     { name = "protobuf" },
     { name = "pyarrow" },
+    { name = "pygments" },
     { name = "sentence-transformers" },
     { name = "setuptools" },
     { name = "streamlit" },
@@ -3178,6 +3180,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "chromadb", specifier = ">=1.0.12" },
+    { name = "filelock", specifier = ">=3.20.1" },
     { name = "gitpython", specifier = ">=3.1.50" },
     { name = "idna", specifier = ">=3.15" },
     { name = "ipykernel", specifier = ">=6.25.0" },
@@ -3192,9 +3195,10 @@ requires-dist = [
     { name = "pillow", specifier = ">=12.2.0" },
     { name = "protobuf", specifier = ">=5.29.6" },
     { name = "pyarrow", specifier = ">=23.0.1" },
+    { name = "pygments", specifier = ">=2.20.0" },
     { name = "sentence-transformers", specifier = ">=4.1.0" },
     { name = "setuptools", specifier = ">=78.1.1" },
-    { name = "streamlit", specifier = ">=1.30.0" },
+    { name = "streamlit", specifier = ">=1.54.0" },
     { name = "tqdm", specifier = ">=4.65.0" },
 ]
 
