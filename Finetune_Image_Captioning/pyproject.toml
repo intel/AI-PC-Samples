@@ -23,6 +23,8 @@ dependencies = [
     "aiohttp>=3.14.0",
     "fonttools>=4.60.2",
     "filelock>=3.20.1",
+    "pyarrow>=23.0.1",
+    "pygments>=2.20.0",
 ]
 [tool.uv.sources]
 torch = [
