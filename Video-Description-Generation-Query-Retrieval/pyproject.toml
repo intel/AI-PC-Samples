@@ -6,7 +6,7 @@ readme = "README_Ollama.md"
 requires-python = ">=3.12.0"
 dependencies = [
     "ollama>=0.4.0",
-    "streamlit>=1.30.0",
+    "streamlit>=1.54.0",
     "chromadb>=1.0.12",
     "sentence-transformers>=4.1.0",
     "opencv-python>=4.8.0",
@@ -15,5 +15,14 @@ dependencies = [
     "jupyter>=1.1.1",
     "ipykernel>=6.25.0",
     "ipywidgets>=8.1.0",
-    "protobuf>=3.20.0,<4.0.0",
+    "protobuf>=5.29.6",
+    "gitpython>=3.1.50",
+    "mistune>=3.2.1",
+    "pillow>=12.2.0",
+    "nbconvert>=7.17.0",
+    "setuptools>=78.1.1",
+    "jupyter-server>=2.18.0",
+    "pyarrow>=23.0.1",
+    "idna>=3.15",
+    "filelock>=3.20.1",
 ]

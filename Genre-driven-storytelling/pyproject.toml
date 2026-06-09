@@ -13,6 +13,13 @@ dependencies = [
   "ipywidgets>=8.1.7",
   "qwen-vl-utils>=0.0.11",
   "matplotlib>=3.10.3",
+    "mistune>=3.2.1",
+    "pillow>=12.2.0",
+    "nbconvert>=7.17.0",
+    "setuptools>=78.1.1",
+    "jupyter-server>=2.18.0",
+    "idna>=3.15",
+    "filelock>=3.20.1",
 ]
 
 [tool.uv.sources]
