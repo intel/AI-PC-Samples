@@ -7,11 +7,11 @@ requires-python = "==3.12.*"
 dependencies = [
     "ipykernel>=6.29.5",
     "ipywidgets>=8.1.5",
-    "jupyterlab>=4.3.5",
+    "jupyterlab>=4.5.7",
     "torch>=2.6.0",
     "torchvision>=0.21.0",
     "torchaudio>=2.6.0",
-    "transformers>=4.49.0",
+    "transformers>=5.0.0rc3",
     "accelerate>=1.4.0",
     "datasets>=3.3.2",
     "librosa>=0.11.0",

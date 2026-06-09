@@ -53,6 +53,16 @@ The sample uses [uv](https://docs.astral.sh/uv/) for environment management. Ste
     uv run jupyter nbconvert --execute --to notebook --inplace --debug AI_Upscaling_With_NPU.ipynb
     ```
 
+## Running the Streamlit App
+
+To launch the interactive Streamlit demo, run the following command from the project directory:
+
+```bash
+uv run streamlit run NPU_Upscaling_demo.py
+```
+
+---
+
 ## Opening Jupyter Notebook
 
 If you choose to run the Jupyter Notebook directly, you can open the Jupyter Notebook by running the following command:

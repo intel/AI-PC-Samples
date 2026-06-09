@@ -1,9 +1,9 @@
-flask==3.1.2
-flask_cors==6.0.1
-langchain==1.0.2
-langchain-community==0.4.1
-sentence-transformers==5.0.0
-langchain_chroma==1.0.0
-pypdf==6.4.0
+flask==3.1.3
+flask_cors==6.0.3
+langchain==1.3.4
+langchain-community==0.4.2
+sentence-transformers==5.5.1
+langchain_chroma==1.1.0
+pypdf==6.13.1
 optimum[openvino,nncf]
-ipykernel==7.1.0
+ipykernel==7.2.0

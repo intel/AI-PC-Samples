@@ -118,20 +118,68 @@ def download_file(url, output_file):
     Args:
         url: The URL of the file to download
         output_file: The path where the downloaded file will be saved
+
+    Returns:
+        bool: True if the download was successful, False otherwise
     """
 
-    try:
-        response = requests.get(url, stream=True, timeout=10)
+    def _do_download(verify_ssl):
+        response = requests.get(url, stream=True, timeout=10, verify=verify_ssl)
         response.raise_for_status()
         with open(output_file, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
                     f.write(chunk)
 
+    try:
+        _do_download(verify_ssl=True)
         print(f"File has been downloaded as {output_file}")
-
+        return True
+    except requests.exceptions.SSLError:
+        print("SSL verification failed, retrying without SSL verification...")
+        try:
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            _do_download(verify_ssl=False)
+            print(f"File has been downloaded as {output_file}")
+            return True
+        except requests.exceptions.RequestException as e:
+            print(f"Error downloading file: {e}")
+            return False
     except requests.exceptions.RequestException as e:
         print(f"Error downloading file: {e}")
+        return False
+
+
+def download_file_to_memory(url):
+    """Downloads a file from the given URL and returns its raw content as bytes.
+
+    Args:
+        url: The URL of the file to download
+
+    Returns:
+        bytes on success, or None on failure
+    """
+
+    def _fetch(verify_ssl):
+        response = requests.get(url, stream=True, timeout=30, verify=verify_ssl)
+        response.raise_for_status()
+        return response.content
+
+    try:
+        return _fetch(verify_ssl=True)
+    except requests.exceptions.SSLError:
+        print("SSL verification failed, retrying without SSL verification...")
+        try:
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            return _fetch(verify_ssl=False)
+        except requests.exceptions.RequestException as e:
+            print(f"Error downloading file: {e}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading file: {e}")
+        return None
 
 
 def resize_video(input_path, scale=2):
