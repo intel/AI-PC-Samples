@@ -7,7 +7,7 @@ requires-python = ">=3.12.0"
 dependencies = [
     "ollama>=0.4.0",
     "streamlit>=1.54.0",
-    "chromadb>=1.0.12",
+    "chromadb>=1.5.9",
     "sentence-transformers>=4.1.0",
     "opencv-python>=4.8.0",
     "numpy>=1.24.0",
