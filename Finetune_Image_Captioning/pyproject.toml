@@ -5,8 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "torch>=2.7.0",
-    "torchvision>=0.22.0",
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",
     "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
     "datasets>=3.6.0",
     "jupyter>=1.1.1",
