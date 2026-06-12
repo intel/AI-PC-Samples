@@ -7,7 +7,7 @@ requires-python = ">=3.12.0"
 dependencies = [
     "ollama>=0.4.0",
     "streamlit>=1.54.0",
-    "chromadb>=1.5.9",
+    "chromadb>=1.0.12",
     "sentence-transformers>=4.1.0",
     "opencv-python>=4.8.0",
     "numpy>=1.24.0",
@@ -17,6 +17,7 @@ dependencies = [
     "ipywidgets>=8.1.0",
     "protobuf>=5.29.6",
     "gitpython>=3.1.50",
+    "torch>=2.10.0",
     "mistune>=3.2.1",
     "pillow>=12.2.0",
     "nbconvert>=7.17.0",
