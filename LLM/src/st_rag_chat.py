@@ -87,8 +87,10 @@ def load_document(source_path, source_type="URL"):
         # Load from local file in data folder
         current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Go up to LLM folder
         data_dir = os.path.join(current_dir, "data")
-        full_path = os.path.join(data_dir, source_path)
-        
+        # Normalize and validate that full_path stays within data_dir
+        full_path = os.path.normpath(os.path.join(data_dir, source_path))
+        if not full_path.startswith(os.path.abspath(data_dir) + os.sep):
+            raise ValueError("Access to files outside the data directory is not allowed.")
         if not os.path.exists(full_path):
             raise FileNotFoundError(f"File not found: {full_path}")
         
