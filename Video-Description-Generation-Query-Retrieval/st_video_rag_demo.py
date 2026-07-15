@@ -1,9 +1,10 @@
 import os
 import base64
+import json
 import shutil
 import logging
-import chromadb
 import warnings
+import numpy as np
 import ollama
 import cv2
 import streamlit as st
@@ -11,6 +12,76 @@ from sentence_transformers import SentenceTransformer
 
 warnings.filterwarnings("ignore")
 logging.basicConfig(level=logging.INFO)
+
+
+class SimpleVectorDB:
+    """Lightweight persistent vector database using numpy cosine similarity and JSON metadata."""
+
+    def __init__(self, path):
+        self._path = path
+        self._data_file = os.path.join(path, "data.json")
+        self._emb_file = os.path.join(path, "embeddings.npy")
+        self._embeddings = None
+        self._documents = []
+        self._metadatas = []
+        self._ids = []
+        os.makedirs(path, exist_ok=True)
+        self._load()
+
+    def _load(self):
+        if os.path.exists(self._data_file) and os.path.exists(self._emb_file):
+            with open(self._data_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            self._documents = data["documents"]
+            self._metadatas = data["metadatas"]
+            self._ids = data["ids"]
+            self._embeddings = np.load(self._emb_file)
+
+    def _save(self):
+        with open(self._data_file, "w", encoding="utf-8") as f:
+            json.dump({"documents": self._documents, "metadatas": self._metadatas, "ids": self._ids}, f)
+        if self._embeddings is not None:
+            np.save(self._emb_file, self._embeddings)
+
+    def add(self, embeddings, documents, metadatas, ids):
+        new_emb = np.array(embeddings, dtype=np.float32)
+        self._embeddings = new_emb if self._embeddings is None else np.vstack([self._embeddings, new_emb])
+        self._documents.extend(documents)
+        self._metadatas.extend(metadatas)
+        self._ids.extend(ids)
+        self._save()
+
+    def count(self):
+        return len(self._ids)
+
+    def get(self, include=None):
+        result = {"ids": self._ids}
+        if include and "documents" in include:
+            result["documents"] = self._documents
+        if include and "metadatas" in include:
+            result["metadatas"] = self._metadatas
+        return result
+
+    def query(self, query_embeddings, n_results=3, include=None):
+        if self._embeddings is None or len(self._ids) == 0:
+            return {"ids": [[]], "documents": [[]], "metadatas": [[]], "distances": [[]]}
+        q = np.array(query_embeddings[0], dtype=np.float32)
+        q_norm = np.linalg.norm(q)
+        emb_norms = np.linalg.norm(self._embeddings, axis=1)
+        denom = np.where(emb_norms * q_norm == 0, 1e-10, emb_norms * q_norm)
+        cosine_sim = np.dot(self._embeddings, q) / denom
+        distances = 1.0 - cosine_sim
+        n = min(n_results, len(self._ids))
+        top_idx = np.argsort(distances)[:n].tolist()
+        result = {"ids": [[self._ids[i] for i in top_idx]]}
+        if not include or "documents" in include:
+            result["documents"] = [[self._documents[i] for i in top_idx]]
+        if not include or "metadatas" in include:
+            result["metadatas"] = [[self._metadatas[i] for i in top_idx]]
+        if not include or "distances" in include:
+            result["distances"] = [[float(distances[i]) for i in top_idx]]
+        return result
+
 
 # Configuration
 OLLAMA_BASE_URL = "http://localhost:11434"
@@ -253,38 +324,14 @@ def get_video_paths(folder, max_count):
 
 
 def initialize_database():
-    """Initialize ChromaDB and embedding model."""
+    """Initialize vector database and embedding model."""
     try:
-        client = chromadb.PersistentClient(path=DATABASE_PATH)
-        collection = client.get_or_create_collection(
-            name=COLLECTION_NAME,
-            metadata={"hnsw:space": "cosine"}
-        )
-        
+        collection = SimpleVectorDB(path=DATABASE_PATH)
         embedding_model = SentenceTransformer(EMBEDDING_MODEL)
-        
         return collection, embedding_model
     except Exception as e:
-        error_msg = str(e)
-        
-        if "Could not connect to tenant" in error_msg or "default_tenant" in error_msg:
-            st.error(f"Database initialization error: {e}")
-            st.warning("⚠️ ChromaDB database is corrupted or incompatible.")
-            
-            if st.button("🔄 Reset Database", type="primary"):
-                try:
-                    if os.path.exists(DATABASE_PATH):
-                        shutil.rmtree(DATABASE_PATH)
-                        st.success("✅ Database removed. Click 'Start Processing Videos' again.")
-                        st.rerun()
-                except Exception as reset_error:
-                    st.error(f"Failed to reset database: {reset_error}")
-            
-            st.info("💡 **To fix manually:**\n\n1. Close this app\n2. Delete folder: `Video_descriptions_database_ollama`\n3. Restart the app")
-            return None, None
-        else:
-            st.error(f"Database initialization error: {e}")
-            return None, None
+        st.error(f"Database initialization error: {e}")
+        return None, None
 
 
 def get_existing_descriptions(collection):
@@ -307,7 +354,7 @@ with tab1:
     with col1:
         st.markdown('<div class="metric-card"><h3>🤖 AI Model</h3><p>Vision-Language Models</p></div>', unsafe_allow_html=True)
     with col2:
-        st.markdown('<div class="metric-card"><h3>💾 Storage</h3><p>ChromaDB Vector Store</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><h3>💾 Storage</h3><p>NumPy Vector Store</p></div>', unsafe_allow_html=True)
     with col3:
         st.markdown('<div class="metric-card"><h3>🔍 Search</h3><p>Semantic Similarity</p></div>', unsafe_allow_html=True)
     
@@ -530,7 +577,7 @@ with tab3:
     with cols2[3]:
         st.markdown("### ➡️")
     with cols2[4]:
-        st.markdown("### 💾\n**ChromaDB**\nVector store")
+        st.markdown("### 💾\n**Vector Store**\nnumpy + JSON")
     
     st.markdown("---")
     
@@ -570,7 +617,7 @@ with tab3:
         - Semantic representation
         
         **3. Vector Storage**
-        - ChromaDB persistent storage
+        - NumPy persistent storage
         - Cosine similarity metric
         - Efficient retrieval
         """)
@@ -612,7 +659,7 @@ with tab3:
         st.markdown("""
         **Infrastructure**
         - Ollama Runtime
-        - ChromaDB
+        - NumPy Vector Store
         - Streamlit UI
         """)
     
@@ -660,7 +707,7 @@ with tab4:
     # Core Technologies
     - Ollama: Local LLM runtime
     - Vision-Language Models: Qwen, Llama, etc.
-    - ChromaDB: Efficient vector database
+    - NumPy Vector Store: Lightweight vector database
     - Sentence Transformers: Text embedding generation
     - Streamlit: Interactive web interface
     - OpenCV: Video frame extraction
