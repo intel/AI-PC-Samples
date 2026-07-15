@@ -7,7 +7,6 @@ requires-python = ">=3.12.0"
 dependencies = [
     "ollama>=0.4.0",
     "streamlit>=1.54.0",
-    "chromadb>=1.5.9",
     "sentence-transformers>=4.1.0",
     "opencv-python>=4.8.0",
     "numpy>=1.24.0",
@@ -29,6 +28,5 @@ dependencies = [
     "filelock>=3.20.1",
     "pygments>=2.20.0",
     "soupsieve>=2.8.4",
-    "pydantic-settings>=2.14.2",
     "jupyterlab>=4.5.9",
 ]
