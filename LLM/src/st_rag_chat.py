@@ -88,18 +88,18 @@ def load_document(source_path, source_type="URL"):
         current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Go up to LLM folder
         data_dir = os.path.join(current_dir, "data")
         full_path = os.path.join(data_dir, source_path)
-        
+
         if not os.path.exists(full_path):
             raise FileNotFoundError(f"File not found: {full_path}")
-        
+
         print(f"Loading document from: {full_path}")
         st.markdown(f''' :green[Loading document from: {full_path}] ''')
-        
+
         if source_path.endswith('.pdf'):
             loader = PyPDFLoader(full_path)
         else:
             loader = TextLoader(full_path, encoding='utf-8')
-        
+
         return loader.load()
 
 
@@ -170,10 +170,10 @@ def get_or_create_embeddings(document_url, source_type, embedding_fn):
     cache_key = f"{document_url}_{source_type}_{embedding_type_name}"
     source_hash = hashlib.md5(cache_key.encode()).hexdigest()
     persist_directory = f"./chroma_db/{source_hash}"
-    
+
     print(f"Cache key: {cache_key}")
     print(f"Cache directory: {persist_directory}")
-    
+
     # Check if embeddings already exist and are for the same document
     if os.path.exists(persist_directory):
         # Check if there's a metadata file to verify this is the right document
@@ -199,32 +199,32 @@ def get_or_create_embeddings(document_url, source_type, embedding_fn):
         else:
             print("No metadata file found, creating new embeddings...")
             st.warning("Cache metadata missing, creating new embeddings...")
-    
+
     # Create new embeddings
     start_time = time.time()
     print(f"Creating new embeddings for: {document_url}")
     st.markdown(f''' :green[Creating new embeddings for: {source_type}: {document_url}] ''')
-    
+
     # Clean up the directory if it exists but has issues
     if os.path.exists(persist_directory):
         import shutil
         shutil.rmtree(persist_directory)
-    
+
     document = load_document(document_url, source_type)
     documents = split_document(document)
-    
+
     vector_store = vectorstores.Chroma.from_documents(
         documents=documents,
         embedding=embedding_fn,
         persist_directory=persist_directory
     )
-    
+
     # Save metadata to verify cache validity
     os.makedirs(persist_directory, exist_ok=True)
     metadata_file = os.path.join(persist_directory, "document_info.txt")
     with open(metadata_file, 'w', encoding='utf-8') as f:
         f.write(cache_key)
-    
+
     print(f"Embedding time: {time.time() - start_time:.2f} seconds")
     st.write(f"Embedding time: {time.time() - start_time:.2f} seconds")
     return vector_store
@@ -236,17 +236,17 @@ def get_chat_context():
     """
     if not st.session_state.messages:
         return ""
-    
+
     # Get last few messages for context (limit to avoid token overflow)
     recent_messages = st.session_state.messages[-6:]  # Last 3 Q&A pairs
     context_parts = []
-    
+
     for msg in recent_messages:
         if msg["role"] == "user":
             context_parts.append(f"Previous Question: {msg['content']}")
         else:
             context_parts.append(f"Previous Answer: {msg['content']}")
-    
+
     return "\n".join(context_parts)
 
 
@@ -256,7 +256,7 @@ def handle_chat_query(vector_store, chat_model, question):
     """
     # Get conversation context
     chat_context = get_chat_context()
-    
+
     # Create enhanced question with chat context if available
     if chat_context:
         enhanced_question = f"""
@@ -267,7 +267,7 @@ Current question: {question}
 """
     else:
         enhanced_question = question
-    
+
     # Simple prompt template that only uses context and question
     prompt_template = """
     Use the following pieces of context to answer the question at the end.
@@ -277,26 +277,26 @@ Current question: {question}
 
     Question: {question}
     """
-    
+
     prompt = PromptTemplate(
         template=prompt_template,
         input_variables=["context", "question"]
     )
-    
+
     chain_type_kwargs = {"prompt": prompt}
     retriever = vector_store.as_retriever(search_kwargs={"k": 4})
-    
+
     qachain = RetrievalQA.from_chain_type(
         llm=chat_model,
         retriever=retriever,
         chain_type="stuff",
         chain_type_kwargs=chain_type_kwargs
     )
-    
+
     start_time = time.time()
     answer = qachain.invoke({"query": enhanced_question})
     print(f"Response time: {time.time() - start_time:.2f} seconds")
-    
+
     return answer['result']
 
 
@@ -312,15 +312,15 @@ if load_button:
             try:
                 embedding_fn = initialize_embedding_fn(embedding_type)
                 vector_store = get_or_create_embeddings(source_path, source_type, embedding_fn)
-                
+
                 # Proper warmup: initialize the model and retriever chain
                 st.markdown(''' :green[Initializing RAG system...] ''')
                 chat_model_instance = llms.Ollama(base_url=OLLAMA_BASE_URL, model=model)
-                
+
                 # Warmup the retriever
                 retriever = vector_store.as_retriever(search_kwargs={"k": 4})
                 warmup_docs = retriever.get_relevant_documents("document content summary")
-                
+
                 # Warmup the QA chain with actual query
                 prompt_template = """
     Use the following pieces of context to answer the question at the end.
@@ -335,27 +335,27 @@ if load_button:
                     input_variables=["context", "question"]
                 )
                 chain_type_kwargs = {"prompt": prompt}
-                
+
                 warmup_chain = RetrievalQA.from_chain_type(
                     llm=chat_model_instance,
                     retriever=retriever,
                     chain_type="stuff",
                     chain_type_kwargs=chain_type_kwargs
                 )
-                
+
                 # Execute warmup query
                 warmup_chain.invoke({"query": "What is this document about?"})
-                
+
                 st.session_state.vector_store = vector_store
                 st.session_state.current_document = f"{source_type}: {source_path}"
-                
+
                 # Clear previous chat and add initial summary request
                 st.session_state.messages = []
                 st.session_state.messages.append({
-                    "role": "user", 
+                    "role": "user",
                     "content": "Summarize this document"
                 })
-                
+
                 # Generate the summary automatically
                 st.markdown(''' :green[Generating document summary...] ''')
                 summary = handle_chat_query(
@@ -367,7 +367,7 @@ if load_button:
                     "role": "assistant",
                     "content": summary
                 })
-                
+
                 st.success(f"✅ Document loaded successfully!")
                 st.info(f"Loaded: {st.session_state.current_document}")
                 st.rerun()
@@ -395,11 +395,11 @@ if question := st.chat_input("Ask a question about the document..."):
     else:
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": question})
-        
+
         # Display user message
         with st.chat_message("user"):
             st.markdown(question)
-        
+
         # Generate response
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
@@ -407,15 +407,15 @@ if question := st.chat_input("Ask a question about the document..."):
                     chat_model_instance = llms.Ollama(
                         base_url=OLLAMA_BASE_URL, model=model)
                     response = handle_chat_query(
-                        st.session_state.vector_store, 
-                        chat_model_instance, 
+                        st.session_state.vector_store,
+                        chat_model_instance,
                         question
                     )
                     st.markdown(response)
-                    
+
                     # Add assistant response to chat history
                     st.session_state.messages.append({"role": "assistant", "content": response})
-                    
+
                 except Exception as e:
                     error_msg = f"Error generating response: {str(e)}"
                     st.error(error_msg)
