@@ -1,2 +1,2 @@
 $global:PIXI_PATH = ".pixi"
-$global:PIXI_VERSION = "v0.34.0"
+$global:PIXI_VERSION = "v0.73.0"
