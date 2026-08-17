@@ -24,26 +24,8 @@ jobs:
         with:
           egress-policy: audit
 
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Set up Python
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+      - name: Perform Bandit Analysis
+        uses: PyCQA/bandit-action@8a1b30610f61f3f792fe7556e888c9d7dffa52de # v1.0.0
         with:
-          python-version: "3.12"
-
-      - name: Install Bandit
-        run: pip install bandit[sarif]
-
-      - name: Run Bandit Analysis
-        run: |
-          set +e
-          bandit --severity-level all --confidence-level all -x '.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg' -r . -f sarif -o results.sarif
-          bandit_exit=$?
-          set -e
-          [ "$bandit_exit" -eq 0 ] || [ "$bandit_exit" -eq 1 ]
-
-      - name: Upload Bandit SARIF
-        uses: github/codeql-action/upload-sarif@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3.28.13
-        with:
-          sarif_file: results.sarif
+          severity: "all"
+          confidence: "all"
