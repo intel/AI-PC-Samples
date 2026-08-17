@@ -6,6 +6,6 @@ huggingface-hub>=0.30.0
 sentence-transformers==3.4.1
 faiss-cpu>=1.7.4
 transformers>=5.5.0
-pypdf>=6.15.0
+pypdf>=6.16.1
 torch>=2.13.0
 beautifulsoup4==4.13.3
