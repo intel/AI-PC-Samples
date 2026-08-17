@@ -308,12 +308,13 @@ def get_video_paths(folder, max_count):
         video_files = []
 
         requested_folder = folder.strip() if folder else "."
+        # Reject absolute paths; resolve symlinks to prevent traversal
         if os.path.isabs(requested_folder):
-            folder_path = os.path.abspath(os.path.normpath(requested_folder))
-        else:
-            folder_path = os.path.abspath(os.path.normpath(os.path.join(VIDEO_DATASET_ROOT, requested_folder)))
-
-        if os.path.commonpath([VIDEO_DATASET_ROOT, folder_path]) != VIDEO_DATASET_ROOT:
+            logging.error("Absolute paths are not allowed for video folder input.")
+            return []
+        root_real = os.path.realpath(VIDEO_DATASET_ROOT)
+        folder_path = os.path.realpath(os.path.join(VIDEO_DATASET_ROOT, requested_folder))
+        if not (folder_path.startswith(root_real + os.sep) or folder_path == root_real):
             logging.error(f"Attempted access outside the video dataset root: {folder_path}")
             return []
 
@@ -518,7 +519,11 @@ with tab2:
                         results['distances'][0]
                     )):
                         similarity_score = 1 - distance
-                        video_path = results['ids'][0][i]
+                        raw_video_path = results['ids'][0][i]
+                        # Re-validate stored path is still within the allowed root
+                        root_real = os.path.realpath(VIDEO_DATASET_ROOT)
+                        resolved = os.path.realpath(raw_video_path)
+                        video_path = resolved if (resolved.startswith(root_real + os.sep) or resolved == root_real) else None
 
                         if similarity_score > 0.7:
                             score_emoji = "🟢"
@@ -541,7 +546,7 @@ with tab2:
                                 st.caption(f"Similarity Score: {similarity_score:.2%} | Distance: {distance:.3f}")
 
                             with col2:
-                                if os.path.exists(video_path):
+                                if video_path and os.path.exists(video_path):
                                     st.markdown("#### 🎬 Video Preview")
                                     st.video(video_path)
                                 else:

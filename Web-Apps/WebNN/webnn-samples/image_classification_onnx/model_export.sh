@@ -2,7 +2,7 @@
 
 # install optimum exporters cli tools
 pip uninstall optimum
-pip install optimum[exporters]
+pip install "optimum[exporters]==2.3.0"
 
 # downgrade huggingface_hub to work-around cached_download import error
 pip uninstall huggingface_hub

@@ -79,6 +79,9 @@ def load_document(source_path, source_type="URL"):
         Document: The loaded document.
     """
     if source_type == "URL":
+        # Restrict to HTTP/HTTPS to prevent file:// and other scheme abuse
+        if not source_path.startswith(("http://", "https://")):
+            raise ValueError("Only HTTP and HTTPS URLs are supported.")
         print("Loading document from URL...")
         st.markdown(''' :green[Loading document from URL...] ''')
         loader = document_loaders.WebBaseLoader(source_path)
