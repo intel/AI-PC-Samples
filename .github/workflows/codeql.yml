@@ -57,16 +57,16 @@ jobs:
         # your codebase is analyzed, see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
     steps:
     - name: Harden Runner
-      uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+      uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
       with:
         egress-policy: audit
 
     - name: Checkout repository
-      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@294a9d92911152fe08befb9ec03e240add280cb3 # v3.26.8
+      uses: github/codeql-action/init@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3.37.7
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
@@ -94,7 +94,7 @@ jobs:
         exit 1
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@294a9d92911152fe08befb9ec03e240add280cb3 # v3.26.8
+      uses: github/codeql-action/analyze@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3.37.7
       with:
         category: "/language:${{matrix.language}}"
     # Wait for GitHub to finish indexing the SARIF upload before querying the API
@@ -102,13 +102,45 @@ jobs:
       run: sleep 60
     - name: Generate Security Report
       continue-on-error: true
-      uses: rsdmike/github-security-report-action@a149b24539044c92786ec39af8ba38c93496495d # v3.0.4
-      with:
-        template: report
-        token: ${{ secrets.AI_PC_SAMPLES_5 }}
+      env:
+        GH_TOKEN: ${{ secrets.AI_PC_SAMPLES_5 }}
+      run: |
+        gh api repos/${{ github.repository }}/code-scanning/alerts \
+          --paginate \
+          --jq '[.[] | {rule: .rule.id, severity: .rule.severity, state: .state, description: .rule.description, path: .most_recent_instance.location.path}]' \
+          > alerts.json
+        python3 - <<'EOF'
+        import json, datetime
+        with open("alerts.json") as f:
+            alerts = json.load(f)
+        rows = "".join(
+            f"<tr><td>{a['rule']}</td><td>{a['severity']}</td><td>{a['state']}</td>"
+            f"<td>{a['description']}</td><td>{a['path']}</td></tr>"
+            for a in alerts
+        )
+        html = f"""<!DOCTYPE html><html><body>
+        <h1>CodeQL Security Report</h1>
+        <p>Repository: ${{ github.repository }}<br>
+        Run: ${{ github.run_id }}<br>
+        Generated: {datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}<br>
+        Total alerts: {len(alerts)}</p>
+        <table border="1" cellpadding="4">
+        <tr><th>Rule</th><th>Severity</th><th>State</th><th>Description</th><th>Path</th></tr>
+        {rows}
+        </table></body></html>"""
+        with open("report.html", "w") as f:
+            f.write(html)
+        print(f"Report written: {len(alerts)} alert(s)")
+        EOF
+        # Convert HTML to PDF using chromium headless (pre-installed on ubuntu-latest)
+        chromium-browser --headless --no-sandbox --print-to-pdf=report.pdf report.html 2>/dev/null \
+          || google-chrome --headless --no-sandbox --print-to-pdf=report.pdf report.html 2>/dev/null \
+          || cp report.html report.pdf  # fallback: upload HTML renamed as .pdf
     - name: GitHub Upload Release Artifacts
-      if: hashFiles('./report.pdf') != ''
-      uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+      if: hashFiles('./report.pdf') != '' || hashFiles('./report.html') != ''
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: report
-        path: ./report.pdf
+        path: |
+          ./report.pdf
+          ./report.html
