@@ -5,7 +5,17 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # 1. Automatically finds ALL nested UV projects anywhere in the repo
+  - package-ecosystem: "uv"
+    directories:
+      - "/**"            # Recursively scans all folders for pyproject.toml / uv.lock
     schedule:
       interval: "weekly"
+
+  # 2. Automatically finds ALL standalone requirements.txt files anywhere in the repo
+  - package-ecosystem: "pip"
+    directories:
+      - "/**"            # Recursively scans all folders for requirements.txt
+    schedule:
+      interval: "weekly"
+
