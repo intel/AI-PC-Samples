@@ -97,15 +97,18 @@ jobs:
       uses: github/codeql-action/analyze@294a9d92911152fe08befb9ec03e240add280cb3 # v3.26.8
       with:
         category: "/language:${{matrix.language}}"
+    # Wait for GitHub to finish indexing the SARIF upload before querying the API
+    - name: Wait for SARIF indexing
+      run: sleep 60
     - name: Generate Security Report
-      uses: rsdmike/github-security-report-action@a149b24539044c92786ec39af8ba38c93496495d # v3.0.4
       continue-on-error: true
+      uses: rsdmike/github-security-report-action@a149b24539044c92786ec39af8ba38c93496495d # v3.0.4
       with:
         template: report
-        token: ${{ secrets.AI_PC_SAMPLES_4 }}
+        token: ${{ secrets.AI_PC_SAMPLES_5 }}
     - name: GitHub Upload Release Artifacts
+      if: hashFiles('./report.pdf') != ''
       uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
       with:
         name: report
-        path: |
-         ./report.pdf
+        path: ./report.pdf
