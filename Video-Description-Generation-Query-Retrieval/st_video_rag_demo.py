@@ -308,9 +308,9 @@ def get_video_paths(folder, max_count):
         video_files = []
 
         requested_folder = folder.strip() if folder else "."
-        # Reject absolute paths; resolve symlinks to prevent traversal
-        if os.path.isabs(requested_folder):
-            logging.error("Absolute paths are not allowed for video folder input.")
+        # Reject absolute paths and any path separators before joining
+        if os.path.isabs(requested_folder) or os.path.basename(requested_folder) != requested_folder:
+            logging.error("Invalid video folder: only simple directory names are allowed.")
             return []
         root_real = os.path.realpath(VIDEO_DATASET_ROOT)
         folder_path = os.path.realpath(os.path.join(VIDEO_DATASET_ROOT, requested_folder))
