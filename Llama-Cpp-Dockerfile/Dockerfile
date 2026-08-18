@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:24.04@sha256:019e8eb29a85e74d64925745884f2ec79aa27e3feab36353d24656f4d6b89467
 
 # Set noninteractive mode to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -43,8 +43,9 @@ RUN curl -fsSL https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
 RUN echo 'source /opt/intel/oneapi/setvars.sh --force' >> /root/.bashrc
 
 # Install UV
-RUN curl -fsSL https://astral.sh/uv/install.sh -o /uv-installer.sh && \
-    sh /uv-installer.sh && rm /uv-installer.sh
+RUN curl --proto '=https' --tlsv1.2 -fsSL \
+    https://releases.astral.sh/github/uv/releases/download/0.12.5/uv-installer.sh \
+    -o /uv-installer.sh && sh /uv-installer.sh && rm /uv-installer.sh
 ENV PATH="/root/.local/bin/:$PATH"
 
 # Create virtual environment
@@ -53,7 +54,7 @@ ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Huggingface Hub
-RUN uv pip install huggingface-hub
+RUN uv pip install "huggingface-hub==0.26.0"
 
 # Install llama-cpp-python with Intel SYCL enabled
 ENV CMAKE_ARGS="-DGGML_SYCL=on -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx"
