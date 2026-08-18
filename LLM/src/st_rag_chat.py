@@ -88,6 +88,13 @@ def load_document(source_path, source_type="URL"):
         return loader.load()
     else:
         # Load from local file in data folder
+        if not source_path:
+            raise ValueError("A local filename must be provided.")
+        # Reject absolute paths and any path separators before joining
+        if os.path.isabs(source_path) or os.path.basename(source_path) != source_path:
+            raise ValueError("Only filenames from the data directory are allowed.")
+        if not source_path.lower().endswith((".txt", ".pdf", ".md")):
+            raise ValueError("Only .txt, .pdf, and .md files are supported.")
         current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Go up to LLM folder
         data_dir = os.path.abspath(os.path.join(current_dir, "data"))
         full_path = os.path.abspath(os.path.normpath(os.path.join(data_dir, source_path)))
