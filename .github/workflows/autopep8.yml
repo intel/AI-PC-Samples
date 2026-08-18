@@ -33,7 +33,7 @@ jobs:
         run: python --version
 
       - name: Install packages
-        run: pip install autopep8
+        run: pip install "autopep8==2.3.2" --hash=sha256:ce8ad498672c845a0c3de2629c15b635ec205ef8177a6e7c91c74f3e9b51128 --hash=sha256:894404f969197b69a995e4ce0661b031f455a9f776d2c5ba3dbd83466931758
 
       - name: Check code formatting style
         run: |
