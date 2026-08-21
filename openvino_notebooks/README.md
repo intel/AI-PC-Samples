@@ -1,6 +1,6 @@
 # OpenVINO Notebooks
 
-This folder will contain ten OpenVINO notebooks cleaned up and modernized as part of the 2026 AI PC OpenVINO internship project. The first notebook, `hello-npu`, is included now.
+This folder will contain ten OpenVINO notebooks cleaned up and modernized using UV installation.
 
 The original examples and inference workflows are preserved. The work focused on making each notebook easier to set up, understand, reproduce, and validate.
 
