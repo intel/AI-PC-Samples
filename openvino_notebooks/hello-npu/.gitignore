@@ -1,0 +1,10 @@
+.venv/
+.uv-cache/
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+model/
+cache/
+dist/
+*.egg-info/
