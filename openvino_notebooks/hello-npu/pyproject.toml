@@ -10,9 +10,13 @@ dependencies = [
     "openvino>=2026.2",
     "huggingface_hub",
     "requests",
-    "jupyterlab",
+    "jupyterlab>=4.6.2",
+    "jupyter-server>=2.20.0",
     "ipykernel",
-    "pillow>=12.2.0"
+    "mistune>=3.3.0",
+    "pillow>=12.3.0",
+    "setuptools>=83.0.0",
+    "tornado>=6.5.8"
 ]
 
 [tool.uv]
