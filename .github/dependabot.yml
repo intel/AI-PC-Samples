@@ -5,10 +5,16 @@
 
 version: 2
 updates:
-  # 1. Automatically finds ALL nested UV projects anywhere in the repo
+  # 1. Track each UV project explicitly so Dependabot only scans valid manifest directories
   - package-ecosystem: "uv"
     directories:
-      - "/**"            # Recursively scans all folders for pyproject.toml / uv.lock
+      - "/AI-Upscaling-With-NPU"
+      - "/Finetune_Image_Captioning"
+      - "/Genre-driven-storytelling"
+      - "/LLM/PyTorch"
+      - "/Video-Description-Generation-Query-Retrieval"
+      - "/openvino_notebooks/gpu-device"
+      - "/openvino_notebooks/hello-npu"
     schedule:
       interval: "weekly"
 
@@ -18,4 +24,3 @@ updates:
       - "/**"            # Recursively scans all folders for requirements.txt
     schedule:
       interval: "weekly"
-
