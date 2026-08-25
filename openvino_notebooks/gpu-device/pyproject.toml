@@ -1,0 +1,23 @@
+[project]
+name = "gpu-device"
+version = "0.1.0"
+description = "Isolated environment for the gpu-device notebook."
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "openvino>=2026.2.0",
+    "opencv-python>=4.9.0",
+    "tqdm>=4.66",
+    "huggingface_hub>=0.23",
+
+    "jupyterlab>=4.2",
+    "ipykernel>=6.29",
+
+    "IPython>=8.20",
+    "numpy>=1.26"
+]
+
+[tool.uv]
+required-version = ">=0.5.0"
+link-mode = "copy"
