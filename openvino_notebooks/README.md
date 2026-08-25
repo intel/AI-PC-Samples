@@ -9,7 +9,7 @@ The original examples and inference workflows are preserved. The work focused on
 | Notebook | Status | What it covers |
 | --- | --- | --- |
 | `hello-npu` | Available | Getting started with OpenVINO on an Intel NPU |
-| `gpu-device` | Planned | Discovering and using an Intel GPU with OpenVINO |
+| `gpu-device` | Available | Discovering and using an Intel GPU with OpenVINO |
 | `auto-device` | Planned | Letting OpenVINO select the best available device |
 | `async-api` | Planned | Running inference with the asynchronous API |
 | `openvino-tokenizers` | Planned | Using OpenVINO Tokenizers in an inference pipeline |
