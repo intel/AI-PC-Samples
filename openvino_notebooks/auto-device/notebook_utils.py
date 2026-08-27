@@ -474,7 +474,7 @@ def segmentation_map_to_overlay(image, result, alpha, colormap, remove_holes=Fal
     :param alpha: Alpha transparency value for the overlay image.
     :param colormap: A numpy array of shape (num_classes, 3) with an RGB value per class.
     :param remove_holes: If True, remove holes in the segmentation result.
-    :return: An RGP image with segmentation mask overlayed on the source image.
+    :return: An RGB image with segmentation mask overlayed on the source image.
     """
     import cv2
     import numpy as np
