@@ -1,0 +1,32 @@
+[project]
+name = "auto-device"
+version = "0.1.0"
+description = "Auto-device example notebook"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "openvino>=2026.2",
+    "matplotlib>=3.4",
+    "pillow>=12.3.0",
+
+    "torch==2.13.0",
+    "torchvision==0.28.0",
+
+    "tqdm>=4.66",
+    "jupyterlab>=4.6.3",
+    "jupyter-server>=2.20.0",
+    "mistune>=3.3.4",
+    "notebook>=7.0",
+    "ipywidgets>=8.1",
+    "widgetsnbextension>=4.0",
+
+    "ipykernel>=6.29",
+    "ipython>=8.20",
+    "setuptools>=84.0.0",
+    "tornado>=6.5.8"
+]
+
+[tool.uv]
+required-version = ">=0.5.0"
+link-mode = "copy"
