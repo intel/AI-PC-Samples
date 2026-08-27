@@ -9,6 +9,7 @@ dependencies = [
     "openvino>=2026.2",
     "matplotlib>=3.4",
     "pillow>=12.3.0",
+    "requests",
 
     "torch==2.13.0",
     "torchvision==0.28.0",
