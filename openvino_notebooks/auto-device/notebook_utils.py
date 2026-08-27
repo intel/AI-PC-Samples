@@ -597,6 +597,7 @@ class NotebookAlert(Exception):
         self.message = message
         self.alert_class = alert_class
         self.show_message()
+
     def show_message(self):
         from IPython.display import HTML, display
 
