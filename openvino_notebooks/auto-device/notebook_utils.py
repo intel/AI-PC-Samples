@@ -347,7 +347,11 @@ class VideoPlayer:
 
 # ### Segmentation
 #
-# Define a SegmentationMap NamedTuple that keeps the labels and colormap for a segmentation project/dataset. Create CityScapesSegmentation and BinarySegmentation SegmentationMaps. Create a function to convert a segmentation map to an RGB image with a colormap, and to show the segmentation result as an overlay over the original image.
+# Define a SegmentationMap NamedTuple that keeps the labels and colormap for a
+# segmentation project/dataset. Create CityScapesSegmentation and BinarySegmentation
+# SegmentationMaps. Create a function to convert a segmentation map to an RGB
+# image with a colormap, and to show the segmentation result as an overlay over
+# the original image.
 
 # In[ ]:
 
