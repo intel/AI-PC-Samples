@@ -593,10 +593,10 @@ class NotebookAlert(Exception):
         :param message: The message to display.
         :param alert_class: The class for styling the message. Options: info, warning, success, danger.
         """
+        super().__init__(message)
         self.message = message
         self.alert_class = alert_class
         self.show_message()
-
     def show_message(self):
         from IPython.display import HTML, display
 
