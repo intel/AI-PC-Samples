@@ -3,9 +3,9 @@ langchain-community==0.4.2
 langchain-core==1.6.0
 langchain-huggingface==1.2.2
 huggingface-hub>=1.27.0
-sentence-transformers==3.4.1
+sentence-transformers==6.0.0
 faiss-cpu>=1.7.4
-transformers>=5.5.0
+transformers>=5.15.1
 pypdf>=6.16.1
 torch>=2.13.0
 beautifulsoup4==4.15.0
