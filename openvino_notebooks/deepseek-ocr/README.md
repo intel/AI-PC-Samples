@@ -48,7 +48,7 @@ The notebook supports CPU and, when available, GPU inference. NPU is intentional
 
 ## Security notes
 
-The selected model is downloaded before conversion and its architecture requires `trust_remote_code=True`. Review the upstream model repository before running it, and use only the model identifiers provided by this notebook. The notebook does not download or execute helper scripts at runtime, and the Gradio demo stays on localhost by default.
+The selected model is downloaded before conversion and its architecture requires `trust_remote_code=True`, which loads Python modules from the pinned model snapshot. Review the upstream model repository before running it, and use only the model identifiers provided by this notebook. The Gradio demo stays on localhost by default.
 
 ## Experimental status
 
