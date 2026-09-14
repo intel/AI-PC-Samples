@@ -1,0 +1,13 @@
+.venv/
+.uv-cache/
+__pycache__/
+.ipynb_checkpoints/
+DeepSeek_OCR/
+DeepSeek_OCR_2/
+doc_markdown.png
+ocr.jpg
+reachy-mini.jpg
+images/
+result.mmd
+result_with_boxes.jpg
+geo.jpg
