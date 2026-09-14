@@ -51,7 +51,7 @@ def load_image(image_path):
         print(f"error: {e}")
         try:
             return Image.open(image_path)
-        except:
+        except BaseException:
             return None
 
 
@@ -146,9 +146,9 @@ def draw_bounding_boxes(image, refs, ouput_path):
                         draw.rectangle([text_x, text_y, text_x + text_width, text_y + text_height], fill=(255, 255, 255, 30))
 
                         draw.text((text_x, text_y), label_type, font=font, fill=color)
-                    except:  # nosec B110 - best-effort drawing, skip malformed elements
+                    except BaseException:  # nosec B110 - best-effort drawing, skip malformed elements
                         pass
-        except:  # nosec B112 - skip malformed OCR entries, continue to next
+        except BaseException:  # nosec B112 - skip malformed OCR entries, continue to next
             continue
     img_draw.paste(overlay, (0, 0), overlay)
     return img_draw
@@ -528,7 +528,7 @@ def deepseek_v2_attn_forward(
     def rotate_half(x):
         """Rotates half the hidden dims of the input."""
         x1 = x[..., : x.shape[-1] // 2]
-        x2 = x[..., x.shape[-1] // 2 :]
+        x2 = x[..., x.shape[-1] // 2:]
         return torch.cat((-x2, x1), dim=-1)
 
     def apply_rotary_pos_emb(q, k, cos, sin, position_ids, unsqueeze_dim=1):
@@ -925,7 +925,7 @@ class OvModelForCausalLMWithEmb(GenerationMixin):
                 position_ids = np.cumsum(attention_mask, axis=1) - 1
                 position_ids[attention_mask == 0] = 1
                 if past_key_values:
-                    position_ids = position_ids[:, -input_ids.shape[1] :]
+                    position_ids = position_ids[:, -input_ids.shape[1]:]
 
             inputs["position_ids"] = position_ids
 
@@ -978,7 +978,7 @@ class OvModelForCausalLMWithEmb(GenerationMixin):
             # some of the inputs are exclusively passed as part of the cache (e.g. when passing input_embeds as
             # input)
             if attention_mask is not None and input_ids is not None and attention_mask.shape[1] > input_ids.shape[1]:
-                input_ids = input_ids[:, -(attention_mask.shape[1] - past_len) :]
+                input_ids = input_ids[:, -(attention_mask.shape[1] - past_len):]
             # 2 - If the past_length is smaller than input_ids', then input_ids holds all input tokens. We can discard
             # input_ids based on the past_length.
             elif input_ids is not None and past_len < input_ids.shape[1]:
@@ -990,7 +990,7 @@ class OvModelForCausalLMWithEmb(GenerationMixin):
             position_ids = attention_mask.long().cumsum(-1) - 1
             position_ids.masked_fill_(attention_mask == 0, 1)
             if past_key_values and input_ids is not None:
-                position_ids = position_ids[:, -input_ids.shape[1] :]
+                position_ids = position_ids[:, -input_ids.shape[1]:]
         cache_position = torch.arange(past_len, past_len + position_ids.shape[-1], device=position_ids.device)
 
         model_inputs = {
@@ -1493,7 +1493,7 @@ class OVDeepseekOCRForCausalLM(GenerationMixin):
                 )
 
         if "<image>" in conversation[0]["content"] and eval_mode:
-            outputs = tokenizer.decode(output_ids[0, input_ids.unsqueeze(0).shape[1] :])
+            outputs = tokenizer.decode(output_ids[0, input_ids.unsqueeze(0).shape[1]:])
             stop_str = "<｜end▁of▁sentence｜>"
             if outputs.endswith(stop_str):
                 outputs = outputs[: -len(stop_str)]
@@ -1503,7 +1503,7 @@ class OVDeepseekOCRForCausalLM(GenerationMixin):
             return outputs
 
         if "<image>" in conversation[0]["content"] and test_compress:
-            outputs = tokenizer.decode(output_ids[0, input_ids.unsqueeze(0).shape[1] :])
+            outputs = tokenizer.decode(output_ids[0, input_ids.unsqueeze(0).shape[1]:])
             pure_texts_outputs_token_length = len(text_encode(tokenizer, outputs, bos=False, eos=False))
             print("=" * 50)
             print("image size: ", (w, h))
@@ -1513,7 +1513,7 @@ class OVDeepseekOCRForCausalLM(GenerationMixin):
             print("=" * 50)
 
         if "<image>" in conversation[0]["content"] and save_results:
-            outputs = tokenizer.decode(output_ids[0, input_ids.unsqueeze(0).shape[1] :])
+            outputs = tokenizer.decode(output_ids[0, input_ids.unsqueeze(0).shape[1]:])
             stop_str = "<｜end▁of▁sentence｜>"
 
             print("=" * 15 + "save results:" + "=" * 15)
@@ -1564,7 +1564,7 @@ class OVDeepseekOCRForCausalLM(GenerationMixin):
 
                         ax.scatter(p0[0], p0[1], s=5, color="k")
                         ax.scatter(p1[0], p1[1], s=5, color="k")
-                    except:  # nosec B110 - best-effort geometry parsing from model output
+                    except BaseException:  # nosec B110 - best-effort geometry parsing from model output
                         pass
 
                 for endpoint in endpoints:

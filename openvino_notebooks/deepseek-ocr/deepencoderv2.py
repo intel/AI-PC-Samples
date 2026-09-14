@@ -134,7 +134,7 @@ class MlpProjector(nn.Module):
 
         if self.cfg.projector_type == "hybrid_split_feature_mlp_gelu":
             high_x = x[..., : self.cfg.input_dim[0]]
-            low_x = x[..., self.cfg.input_dim[0] :]
+            low_x = x[..., self.cfg.input_dim[0]:]
             high_x = self.high_up_proj(high_x)
             low_x = self.low_up_proj(low_x)
             x = torch.concat([high_x, low_x], dim=-1)
