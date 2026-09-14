@@ -1010,7 +1010,7 @@ def _build_sam(
     image_encoder.eval()
     if checkpoint is not None:
         # with open(checkpoint, "rb") as f:
-        state_dict = torch.load(checkpoint, weights_only=True)
+        state_dict = torch.load(checkpoint, weights_only=True)  # nosec B614 - weights_only blocks pickle deserialization
         # print(state_dict.keys())
         # for key in state_dict:
         # image_encoder.load_state_dict({k[14:]: v for k, v in state_dict.items() if 'image_encoder' in k}, strict=False)
