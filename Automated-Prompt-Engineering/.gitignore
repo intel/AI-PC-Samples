@@ -4,3 +4,7 @@
 __pycache__
 .ruff_cache
 .ipynb_checkpoints/
+uv.lock
+.venv/
+.uv-cache/
+

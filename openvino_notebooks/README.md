@@ -22,7 +22,7 @@ The original examples and inference workflows are preserved. The work focused on
 ## What was modernized
 
 - Reproducible environments and lockfiles using `uv`
-- OpenVINO `2026.2.*` with stable Python and PyTorch packages
+- OpenVINO `2026.3.*` with stable Python and PyTorch packages
 - Cleaner dependencies, setup steps, explanations, and notebook cells
 - Dependency auditing and headless CI validation
 - No unnecessary changes to the original inference logic

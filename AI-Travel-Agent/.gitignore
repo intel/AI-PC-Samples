@@ -2,6 +2,4 @@
 .uv-cache/
 __pycache__/
 .ipynb_checkpoints/
-model/
 uv.lock
-

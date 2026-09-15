@@ -8,3 +8,5 @@ model/
 cache/
 dist/
 *.egg-info/
+uv.lock
+

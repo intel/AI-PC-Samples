@@ -5,3 +5,5 @@ __pycache__/
 tokenizer/
 TinyLlama-1.1B-intermediate-step-1431k-3T/
 bert-tiny-finetuned-sms-spam-detection/
+uv.lock
+

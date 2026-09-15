@@ -8,3 +8,8 @@ upscaled_video.mp4
 environment.yml
 .pixi
 *.egg-info
+uv.lock
+.venv/
+.uv-cache/
+.ipynb_checkpoints/
+
