@@ -71,7 +71,7 @@ Exact devices, timings, and throughput values vary by hardware, driver, and Open
 
 | OS | Python | OpenVINO | Device(s) | Status |
 |----|--------|----------|-----------|--------|
-| Windows 11 | 3.12 | 2026.2 | CPU, GPU | Pass |
+| Windows 11 | 3.12 | 2026.3.1 | CPU, GPU | Pass |
 
 # Troubleshooting
 

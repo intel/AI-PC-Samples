@@ -82,7 +82,7 @@ When the notebook runs successfully, you should see:
 
 | OS | Python | OpenVINO | Device(s) | Status |
 |----|--------|----------|-----------|--------|
-| Windows 11 | 3.12 | 2026.2 | CPU, NPU | Pass |
+| Windows 11 | 3.12 | 2026.3.1 | CPU, NPU | Pass |
 
 # Troubleshooting
 

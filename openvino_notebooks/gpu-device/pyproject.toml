@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 
 dependencies = [
-    "openvino>=2026.2.0",
+    "openvino>=2026.3.1",
     "opencv-python>=4.9.0",
     "tqdm>=4.66",
     "huggingface_hub>=0.23",

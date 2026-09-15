@@ -9,4 +9,7 @@ wheels/
 # Virtual environments
 .venv
 .ipynb_checkpoints
+uv.lock
+.uv-cache/
+
 
