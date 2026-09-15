@@ -1,0 +1,39 @@
+[project]
+name = "deepseek-ocr-notebook"
+version = "0.1.0"
+description = "Isolated environment for deepseek-ocr notebook."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+
+dependencies = [
+    "openvino>=2026.3.1",
+    "nncf>=3.3.0",
+    "torch==2.8.0",
+    "torchvision==0.23.0",
+    "transformers>=5.10.1",
+    "tokenizers>=0.22.0,<0.24",
+    "accelerate>=0.26.0",
+    "huggingface_hub>=1.5.0,<2.0",
+    "hf-xet>=1.2.0",
+    "einops>=0.7",
+    "addict>=2.4.0",
+    "easydict>=1.13",
+    "PyMuPDF>=1.28.2",
+    "gradio>=6.15.0,<7",
+    "pillow>=12.3.0",
+    "matplotlib>=3.9",
+    "jupyterlab>=4.6.3",
+    "jupyter_server>=2.21.0",
+    "notebook>=7.6.2",
+    "jupyter_client>=8.10.0",
+    "ipykernel>=7.3.0",
+    "ipywidgets>=8.1.9",
+    "tornado==6.5.8",
+    "requests>=2.32.0",
+    "IPython>=9.17.1",
+    "numpy>=1.26",
+]
+
+[tool.uv]
+required-version = ">=0.5.0"
+link-mode = "copy"
