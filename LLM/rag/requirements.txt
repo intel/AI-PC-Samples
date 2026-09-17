@@ -5,7 +5,7 @@ langchain-huggingface==1.2.2
 huggingface-hub>=1.31.0
 sentence-transformers==6.0.0
 faiss-cpu>=1.15.0
-transformers>=5.15.1
+transformers>=5.17.0
 pypdf>=6.18.1
 torch>=2.13.0
 beautifulsoup4==4.15.0
