@@ -9,6 +9,7 @@ import re
 import math
 import json
 import time
+import certifi
 import hashlib
 import warnings
 import torch
@@ -452,9 +453,9 @@ def select_podcast_episode(PODCAST_URL):
         except requests.exceptions.SSLError as _ssl_err:
             logging.warning(
                 f" SSL certificate verification failed ({_ssl_err}). "
-                "Retrying without certificate verification — treat the feed as trusted."
+                "Retrying with certifi's CA bundle (does not disable verification)."
             )
-            _resp = requests.get(PODCAST_URL, timeout=20, verify=False)
+            _resp = requests.get(PODCAST_URL, timeout=20, verify=certifi.where())
             _resp.raise_for_status()
             feed = feedparser.parse(_resp.content)
 
@@ -555,9 +556,9 @@ def download_selected_audio(selected_episode, selected_index):
             except requests.exceptions.SSLError as _ssl_err:
                 logging.warning(
                     f" SSL certificate verification failed ({_ssl_err}). "
-                    "Retrying without certificate verification — treat the host as trusted."
+                    "Retrying with certifi's CA bundle (does not disable verification)."
                 )
-                response = _do_download(session, selected_url, headers, verify_ssl=False)
+                response = _do_download(session, selected_url, headers, verify_ssl=certifi.where())
             response.raise_for_status()
 
             content_type = response.headers.get("Content-Type", "")
