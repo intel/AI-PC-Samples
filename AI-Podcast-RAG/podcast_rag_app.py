@@ -101,7 +101,7 @@ def resolve_effective_max_tokens(model_name, requested_max_tokens):
 
 def get_episode_cache_key(feed_name, selected_episode):
     raw_key = f"{feed_name}|{selected_episode.get('title', '')}|{selected_episode.get('url', '')}"
-    return hashlib.md5(raw_key.encode("utf-8")).hexdigest()
+    return hashlib.md5(raw_key.encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
 def get_cache_file_path(cache_key):
@@ -112,7 +112,7 @@ def get_cache_file_path(cache_key):
 def get_audio_response_cache_path(answer_text):
     """Content-addressed cache path for synthesized answer audio, keyed on the exact answer text."""
     os.makedirs(AUDIO_RESPONSE_CACHE_DIR, exist_ok=True)
-    cache_key = hashlib.md5(answer_text.encode("utf-8")).hexdigest()
+    cache_key = hashlib.md5(answer_text.encode("utf-8"), usedforsecurity=False).hexdigest()
     return os.path.join(AUDIO_RESPONSE_CACHE_DIR, f"{cache_key}.wav")
 
 
@@ -1822,7 +1822,7 @@ with tab_demo:
 
         if voice_query_audio is not None:
             voice_bytes = voice_query_audio.getvalue()
-            voice_hash = hashlib.md5(voice_bytes).hexdigest()
+            voice_hash = hashlib.md5(voice_bytes, usedforsecurity=False).hexdigest()
             if st.session_state.last_voice_query_hash != voice_hash:
                 st.session_state.last_voice_query_hash = voice_hash
                 try:
