@@ -1569,8 +1569,8 @@ with tab_demo:
             if pub:
                 try:
                     return datetime.fromisoformat(pub)
-                except Exception:
-                    pass
+                except (ValueError, TypeError) as parse_error:
+                    logging.debug(f" Could not parse episode date '{pub}': {parse_error}")
             return None
 
         if cutoff is not None:
