@@ -3,6 +3,11 @@ Podcast RAG Streamlit Application
 Based on Podcast_RAG.ipynb notebook structure
 """
 
+from transformers import WhisperProcessor, WhisperForConditionalGeneration, pipeline
+from urllib.parse import urlparse
+from collections import Counter
+from teapotai import TeapotAI
+from datetime import datetime, timezone, timedelta
 import os
 import io
 import re
@@ -29,11 +34,6 @@ try:
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 except Exception:
     pass
-from datetime import datetime, timezone, timedelta
-from teapotai import TeapotAI
-from collections import Counter
-from urllib.parse import urlparse
-from transformers import WhisperProcessor, WhisperForConditionalGeneration, pipeline
 
 try:
     import ollama
@@ -299,6 +299,7 @@ class OVMSLLM:
         """Non-streaming generate — collects streamed output for non-display contexts."""
         return "".join(self.chat_stream(prompt, max_tokens=max_tokens, temperature=temperature))
 
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
@@ -322,7 +323,7 @@ st.header("Overview")
 st.markdown("""
 This application demonstrates a Retrieval-Augmented Generation (RAG) system using a **Podcast episode** as the knowledge base, with text query capability.
 
-Initially an RSS feed link will be the input to allow the user to select and download a specific podcast episode. The selected audio undergoes preprocessing steps such as resampling and chunking to prepare it for transcription. 
+Initially an RSS feed link will be the input to allow the user to select and download a specific podcast episode. The selected audio undergoes preprocessing steps such as resampling and chunking to prepare it for transcription.
 Each chunk is transcribed to text using the [**Whisper base model**](https://huggingface.co/openai/whisper-base) via an Automatic Speech Recognition (ASR) pipeline optimized to run on **Intel® Core™ Ultra Processors** with [**PyTorch XPU backend**](https://pytorch.org/docs/stable/notes/get_start_xpu.html) for hardware acceleration. These transcriptions are then embedded using [**Teapot LLM**](https://huggingface.co/teapotai/teapotllm), creating a knowledge base.
 User queries are handled by the Teapot RAG system so that it retrieves a relevant text response.
 """)
@@ -427,6 +428,7 @@ digraph PodcastRAG {
 # FUNCTION DEFINITIONS (from notebook)
 # ========================================
 
+
 def select_podcast_episode(PODCAST_URL):
     """
     Fetches and displays a dropdown widget to select an episode.
@@ -461,7 +463,7 @@ def select_podcast_episode(PODCAST_URL):
 
         if getattr(feed, "bozo", False):
             logging.warning(f" Feed parser warning: {feed.bozo_exception}")
-        
+
         episodes = []
         for entry in getattr(feed, "entries", []):
             audio_url = None
@@ -486,13 +488,13 @@ def select_podcast_episode(PODCAST_URL):
                     "feed_url": PODCAST_URL,
                     "published": pub_dt.isoformat() if pub_dt else None,
                 })
-        
+
         if not episodes:
             raise ValueError(
                 "No playable podcast episodes found. Use a direct RSS feed URL (XML), not a webpage URL. "
                 "Examples: https://feeds.feedburner.com/tedtalks_audio or https://feeds.npr.org/510289/podcast.xml"
             )
-        
+
         logging.info(f" Found {len(episodes)} episodes")
         return episodes
     except Exception as e:
@@ -507,7 +509,7 @@ def download_selected_audio(selected_episode, selected_index):
     Args:
         selected_episode: Selected episode dictionary
         selected_index: Index of selected episode
-        
+
     Returns:
         audio_path (str): The file path to the saved audio file.
 
@@ -612,7 +614,7 @@ def process_podcast_audio(audio_path, model, processor):
     Process an audio file for transcription using a ASR model.
 
     Args:
-        audio_path (str): The file path to the saved audio file.    
+        audio_path (str): The file path to the saved audio file.
         model : The loaded Whisper model.
         processor: processor for pre-processing of audio input
 
@@ -642,22 +644,22 @@ def process_podcast_audio(audio_path, model, processor):
 
         logging.info(f" Original sample rate: {sample_rate} Hz")
         logging.info(f" Audio shape: {waveform.shape}")
-        
+
         if waveform.shape[0] > 1:
             waveform = torch.mean(waveform, dim=0, keepdim=True)
             logging.info(" Converted stereo to mono")
-        
+
         if sample_rate != 16000:
             resampler = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=16000)
             waveform = resampler(waveform)
             sample_rate = 16000
             logging.info(" Resampled to 16kHz")
             logging.info(f" Audio shape: {waveform.shape}")
-        
+
         audio = waveform.squeeze().numpy()
         if len(audio) <= 0:
             raise ValueError("Loaded audio is empty.")
-        logging.info(f" Audio duration: {len(audio)/sample_rate:.1f} seconds")
+        logging.info(f" Audio duration: {len(audio) / sample_rate:.1f} seconds")
         chunk_length = 22 * 16000   # 22 seconds
         overlap_length = 1 * 16000  # 1 second overlap
         transcription_parts = []
@@ -665,22 +667,22 @@ def process_podcast_audio(audio_path, model, processor):
         step_size = chunk_length - overlap_length
         total_chunks = max(1, (len(audio) + step_size - 1) // step_size)
         logging.info(f" Processing approximately {total_chunks} chunks of audio..")
-        
+
         progress_bar = st.progress(0)
         status_text = st.empty()
         live_transcription_expander = st.expander("📝 Live Transcription (updates during processing)", expanded=False)
         live_transcription_placeholder = live_transcription_expander.empty()
-        
+
         for i in range(0, len(audio), chunk_length - overlap_length):
             chunk = audio[i:i + chunk_length]
             if len(chunk) < 1600:   # Less than 0.1 seconds, skip that chunk
                 continue
-            
+
             current_chunk = len(transcription_parts) + 1
             logging.info(f" Processing chunk {current_chunk}/{total_chunks}...")
             status_text.text(f"Processing chunk {current_chunk}/{total_chunks}...")
             progress_bar.progress(min(1.0, current_chunk / total_chunks))
-            
+
             input_features = processor(chunk, sampling_rate=16000, return_tensors="pt").input_features
             input_features = input_features.to('xpu' if torch.xpu.is_available() else 'cpu')
             chunk_start_time = time.perf_counter()
@@ -698,7 +700,7 @@ def process_podcast_audio(audio_path, model, processor):
                     predicted_ids = model.generate(input_features.to("cpu"), **gen_kwargs)
                 model.to(original_device)
             chunk_elapsed = time.perf_counter() - chunk_start_time
-            chunk_transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]        
+            chunk_transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
             transcription_parts.append(chunk_transcription)
             logging.info(f" Chunk {len(transcription_parts)} ({chunk_elapsed:.1f}s): {chunk_transcription}..")
             live_transcription_placeholder.text_area(
@@ -707,10 +709,10 @@ def process_podcast_audio(audio_path, model, processor):
                 height=300,
                 key=f"live_transcription_{current_chunk}"
             )
-        
+
         progress_bar.empty()
         status_text.empty()
-        
+
         transcription = " ".join(transcription_parts)
         logging.info(f"\n\n Total length: {len(transcription)} characters")
         logging.info(f" Audio path: {audio_path}")
@@ -846,14 +848,13 @@ def synthesize_speech_response(text, synthesiser, speaker_embedding, max_chars_p
         raise
 
 
-
 def generate_embeddings(transcription_parts):
     """
     Generate embeddings for the list of transcribed text chunks.
-    
+
     Args:
         transcription_parts (list): List of transcribed text chunks from the audio file.
-    
+
     Returns:
         teapot_ai : Model with text embeddings.
 
@@ -871,8 +872,6 @@ def generate_embeddings(transcription_parts):
     except Exception as e:
         logging.exception(f" Error while generating embeddings using TeapotAI : {str(e)}")
         raise
-
-
 
 
 def _tokenize(text):
@@ -1548,12 +1547,12 @@ with tab_demo:
         # ── Recency filter ────────────────────────────────────────────────────────
         now_utc = datetime.now(timezone.utc)
         recency_options = {
-            "Last 7 days":   timedelta(days=7),
-            "Last 30 days":  timedelta(days=30),
+            "Last 7 days": timedelta(days=7),
+            "Last 30 days": timedelta(days=30),
             "Last 3 months": timedelta(days=90),
             "Last 6 months": timedelta(days=180),
-            "Last year":     timedelta(days=365),
-            "All episodes":  None,
+            "Last year": timedelta(days=365),
+            "All episodes": None,
         }
         filter_col, info_col = st.columns([2, 3])
         with filter_col:
@@ -1619,29 +1618,29 @@ with tab_demo:
             st.session_state.selected_episode_title,
             selected_episode.get("url")
         )
-    
+
         ep_dt = _ep_dt(selected_episode)
         date_display = ep_dt.strftime("%B %d, %Y") if ep_dt else "date unknown"
         st.info(f"**Selected:** {selected_episode['title']}  \n📅 Published: {date_display}")
         if cache_exists:
             st.success("✅ Cached transcript found for this episode. You can skip re-transcription.")
-    
+
         if st.button("⬇️ Download Audio", use_container_width=True):
             with st.spinner("Downloading audio file..."):
                 try:
                     reset_rag_state(clear_audio=False)
                     st.session_state.audio_path = download_selected_audio(selected_episode, selected_index_in_filtered)
                     st.success(f"✅ Audio downloaded: {st.session_state.audio_path}")
-                    st.info(f"File size: {os.path.getsize(st.session_state.audio_path) / (1024*1024):.2f} MB")
+                    st.info(f"File size: {os.path.getsize(st.session_state.audio_path) / (1024 * 1024):.2f} MB")
                 except Exception as e:
                     st.error(f"❌ Error downloading audio: {str(e)}")
-    
+
         st.divider()
 
     # Step 3: Initialize Models and Process Audio
     if st.session_state.audio_path or st.session_state.current_episode_cache_key:
         st.header("🤖 Step 3: Initialize Models & Process Audio")
-    
+
         if st.button("🚀 Start Transcription", use_container_width=True):
             try:
                 cache_key = st.session_state.current_episode_cache_key
@@ -1667,7 +1666,7 @@ with tab_demo:
                         if st.session_state.model is None:
                             st.session_state.model, st.session_state.processor = initialize_audio_models()
                             st.success("✅ Model loaded!")
-                
+
                     # Process audio
                     with st.spinner("Transcribing audio... This may take a few minutes."):
                         st.session_state.transcription_parts = process_podcast_audio(
@@ -1676,7 +1675,7 @@ with tab_demo:
                             st.session_state.processor
                         )
                         st.success(f"✅ Transcription complete! ({len(st.session_state.transcription_parts)} chunks)")
-            
+
                 # Generate embeddings
                 with st.spinner("Generating embeddings..."):
                     st.session_state.teapot_ai = generate_embeddings(st.session_state.transcription_parts)
@@ -1703,10 +1702,10 @@ with tab_demo:
                         height=400,
                         key="full_transcription_view"
                     )
-        
+
             except Exception as e:
                 st.error(f"❌ Error during processing: {str(e)}")
-    
+
         st.divider()
 
     # Step 4: Query the Podcast
@@ -1718,7 +1717,7 @@ with tab_demo:
             st.caption(
                 f"Active transcript source: {source.get('feed_name', 'Unknown feed')} — {source.get('episode_title', 'Unknown episode')}"
             )
-    
+
         # Response length slider
         max_tokens = st.slider(
             "📏 Response Length (tokens)",
@@ -1844,10 +1843,10 @@ with tab_demo:
         # Custom query input
         st.subheader("Or ask your own question:")
         custom_query = st.text_input("Enter your question:", key="custom_query_input")
-    
+
         if st.button("🔍 Get Answer", use_container_width=True) and custom_query:
             set_current_query(custom_query)
-    
+
         # Display answer
         if hasattr(st.session_state, 'current_query') and st.session_state.current_query:
             try:
