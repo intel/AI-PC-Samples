@@ -14,7 +14,7 @@ dependencies = [
     "huggingface_hub>=0.23",
 
     "jupyterlab>=4.6.3",
-    "jupyter_server>=2.21.0",
+    "jupyter-server>=2.21.0",
     "mistune>=3.3.4",
     "notebook>=7.2",
     "jupyter_client>=8.6",
