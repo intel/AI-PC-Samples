@@ -7,6 +7,8 @@ from transformers import WhisperProcessor, WhisperForConditionalGeneration, pipe
 from urllib.parse import urlparse
 from collections import Counter
 from teapotai import TeapotAI
+import ipaddress
+import socket
 from datetime import datetime, timezone, timedelta
 import os
 import io
@@ -429,6 +431,60 @@ digraph PodcastRAG {
 # ========================================
 
 
+def _validate_external_feed_url(url: str) -> str:
+    """
+    Validate user-provided feed URL to mitigate SSRF.
+    Allows only public http/https endpoints.
+    """
+    parsed = urlparse((url or "").strip())
+
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError("Only http/https RSS feed URLs are allowed.")
+
+    if not parsed.hostname:
+        raise ValueError("RSS feed URL must include a valid hostname.")
+
+    host = parsed.hostname.strip().lower()
+    if host == "localhost" or host.endswith(".local"):
+        raise ValueError("Local/private hosts are not allowed.")
+
+    try:
+        ip_obj = ipaddress.ip_address(host)
+        if (
+            ip_obj.is_private
+            or ip_obj.is_loopback
+            or ip_obj.is_link_local
+            or ip_obj.is_multicast
+            or ip_obj.is_reserved
+            or ip_obj.is_unspecified
+        ):
+            raise ValueError("Private or non-routable IP addresses are not allowed.")
+    except ValueError:
+        # Not an IP literal; resolve hostname and ensure all resolved IPs are public.
+        try:
+            addrinfos = socket.getaddrinfo(host, None)
+        except socket.gaierror:
+            raise ValueError("Unable to resolve RSS feed hostname.")
+
+        resolved_ips = {ai[4][0] for ai in addrinfos if ai and ai[4]}
+        if not resolved_ips:
+            raise ValueError("Unable to resolve RSS feed hostname.")
+
+        for ip in resolved_ips:
+            ip_obj = ipaddress.ip_address(ip)
+            if (
+                ip_obj.is_private
+                or ip_obj.is_loopback
+                or ip_obj.is_link_local
+                or ip_obj.is_multicast
+                or ip_obj.is_reserved
+                or ip_obj.is_unspecified
+            ):
+                raise ValueError("RSS feed host resolves to a private/non-routable address.")
+
+    return url
+
+
 def select_podcast_episode(PODCAST_URL):
     """
     Fetches and displays a dropdown widget to select an episode.
@@ -443,6 +499,7 @@ def select_podcast_episode(PODCAST_URL):
         Exception : Raises an exception if there is any error while selecting the episode.
     """
     try:
+        PODCAST_URL = _validate_external_feed_url(PODCAST_URL)
         logging.info(f" Found podcast URL.")
 
         # Pre-fetch via requests so we can handle SSL certificate errors gracefully.
