@@ -438,7 +438,7 @@ requires-dist = [
     { name = "idna", specifier = ">=3.15" },
     { name = "ipywidgets", specifier = ">=8.1.7" },
     { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "jupyter-server", specifier = ">=2.20.0" },
+    { name = "jupyter-server", specifier = ">=2.21.0" },
     { name = "jupyterlab", specifier = ">=4.6.2" },
     { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "mistune", specifier = ">=3.3.0" },
@@ -448,13 +448,13 @@ requires-dist = [
     { name = "pytorch-triton-xpu", marker = "sys_platform == 'linux' or sys_platform == 'win32'", specifier = ">=3.5.0", index = "https://download.pytorch.org/whl/xpu" },
     { name = "qwen-vl-utils", specifier = ">=0.0.11" },
     { name = "setuptools", specifier = ">=83.0.0" },
-    { name = "soupsieve", specifier = ">=2.8.4" },
+    { name = "soupsieve", specifier = ">=2.9.0" },
     { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32'", specifier = ">=2.9.1" },
     { name = "torch", marker = "sys_platform == 'linux' or sys_platform == 'win32'", specifier = ">=2.9.1", index = "https://download.pytorch.org/whl/xpu" },
     { name = "torchvision", marker = "sys_platform != 'linux' and sys_platform != 'win32'", specifier = ">=0.24.1" },
     { name = "torchvision", marker = "sys_platform == 'linux' or sys_platform == 'win32'", specifier = ">=0.24.1", index = "https://download.pytorch.org/whl/xpu" },
     { name = "tornado", specifier = ">=6.5.8" },
-    { name = "transformers", specifier = ">=5.5.0" },
+    { name = "transformers", specifier = ">=5.10.0" },
 ]
 
 [[package]]
