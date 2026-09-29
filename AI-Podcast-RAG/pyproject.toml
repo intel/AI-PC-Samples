@@ -13,7 +13,7 @@ dependencies = [
     "feedparser>=6.0.11",
     "torchaudio>=2.9.1",
     "huggingface_hub[hf_xet]>=0.33.2",
-    "transformers>=4.53.1",
+    "transformers>=5.10.0",
     "soundfile>=0.13.1",
     "teapotai>=2.0.8",
     "protobuf>=6.31.1",
@@ -23,7 +23,7 @@ dependencies = [
     "torchcodec>=0.10.0",
     "openvino>=2025.4.1",
     "openai>=3.6.0",
-    "datasets==3.6.0",
+    "datasets>=5.0.1",
 ]
 
 [tool.uv.sources]
