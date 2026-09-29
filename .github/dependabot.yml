@@ -9,14 +9,17 @@ updates:
   - package-ecosystem: "uv"
     directories:
       - "/AI-Upscaling-With-NPU"
+      - "/AI-Podcast-RAG"
       - "/Finetune_Image_Captioning"
       - "/Genre-driven-storytelling"
       - "/LLM/PyTorch"
       - "/Video-Description-Generation-Query-Retrieval"
       - "/openvino_notebooks/auto-device"
+      - "/openvino_notebooks/async-api"
       - "/openvino_notebooks/deepseek-ocr"
       - "/openvino_notebooks/gpu-device"
       - "/openvino_notebooks/hello-npu"
+      - "/openvino_notebooks/openvino-tokenizers"
     schedule:
       interval: "weekly"
 
