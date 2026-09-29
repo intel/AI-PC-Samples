@@ -124,7 +124,9 @@ def draw_bounding_boxes(image, refs, ouput_path):
                     if label_type == "image":
                         try:
                             cropped = image.crop((x1, y1, x2, y2))
-                            Path(ouput_path, "images").mkdir(parents=True, exist_ok=True)\n                            cropped.save(f"{ouput_path}/images/{img_idx}.jpg")
+                            Path(ouput_path, "images").mkdir(parents=True, exist_ok=True)
+                            cropped.save(f"{ouput_path}/images/{img_idx}.jpg")
+                        except Exception as e:
                             print(e)
                             pass
                         img_idx += 1
