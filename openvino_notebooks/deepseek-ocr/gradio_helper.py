@@ -170,7 +170,7 @@ def make_demo(model, tokenizer):
         )
 
         result = "\n".join(
-            [l for l in sys.stdout.getvalue().split("\n") if not any(s in l for s in ["image:", "other:", "PATCHES", "====", "BASE:", "%|", "torch.Size"])]
+            [line for line in sys.stdout.getvalue().split("\n") if not any(s in line for s in ["image:", "other:", "PATCHES", "====", "BASE:", "%|", "torch.Size"])]
         ).strip()
         sys.stdout = stdout
 

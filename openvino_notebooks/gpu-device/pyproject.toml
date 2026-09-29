@@ -12,7 +12,7 @@ dependencies = [
     "huggingface_hub>=0.23",
 
     "jupyterlab>=4.6.2",
-    "jupyter-server>=2.20.0",
+    "jupyter-server>=2.21.0",
     "ipykernel>=6.29",
     "mistune>=3.3.0",
     "setuptools>=83.0.0",
