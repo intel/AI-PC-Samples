@@ -9,7 +9,7 @@ dependencies = [
     "openvino==2026.2.1",
     "openvino-tokenizers[transformers]==2026.2.1.0",
     "openvino-genai==2026.2.1.0",
-    "torch==2.13.0",
+    "torch==2.14.1",
     "transformers>=5.10.0",
     "huggingface_hub>=1.5.0",
     "tqdm>=4.66",

@@ -28,7 +28,7 @@ dependencies = [
     "jupyter_client>=8.10.0",
     "ipykernel>=7.3.0",
     "ipywidgets>=8.1.9",
-    "tornado==6.5.8",
+    "tornado==6.5.9",
     "requests>=2.32.0",
     "IPython>=9.17.1",
     "numpy>=1.26",
