@@ -2,7 +2,7 @@
 import time
 from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
-from code import load_llm, pre_process_url_data, qa_on_url_summarized_text, pre_process_pdf_data, qa_on_pdf_summarized_text
+from code import load_llm, pre_process_url_data, qa_on_url_summarized_text, pre_process_pdf_data, qa_on_pdf_summarized_text, _validate_external_url
 import tempfile
 import chromadb
 
@@ -50,6 +50,10 @@ def process_url():
         url = data.get('url')
         if not url:
             return jsonify({'message': 'No URL provided'}), 400
+        try:
+            _validate_external_url(url)
+        except ValueError as e:
+            return jsonify({'message': f'Invalid URL: {e}'}), 400
         chromadb.api.client.SharedSystemClient.clear_system_cache()
         return Response(stream_output(pre_process_url_data, [url]), content_type='text/event-stream')
 

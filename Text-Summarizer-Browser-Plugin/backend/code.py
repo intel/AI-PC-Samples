@@ -1,4 +1,8 @@
 # Importing necessary libraries
+import ipaddress
+import socket
+from urllib.parse import urlparse
+
 from transformers import AutoTokenizer, pipeline
 from optimum.intel import OVModelForCausalLM
 from langchain_community.llms import HuggingFacePipeline
@@ -18,6 +22,56 @@ query_template = """Use the following pieces of context to answer the question a
     {context}
     Question: {question}
     Helpful Answer:"""
+
+
+def _validate_external_url(url: str) -> str:
+    """
+    Validate a user-supplied URL before the server fetches it, to mitigate
+    Server-Side Request Forgery (SSRF). Only public http/https endpoints are
+    allowed; requests to localhost, link-local, private, and other
+    non-routable addresses are rejected so the backend cannot be tricked into
+    reaching internal services (e.g. cloud metadata endpoints, LAN hosts).
+    """
+    parsed = urlparse((url or "").strip())
+
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError("Only http/https URLs are allowed.")
+
+    if not parsed.hostname:
+        raise ValueError("URL must include a valid hostname.")
+
+    host = parsed.hostname.strip().lower()
+    if host == "localhost" or host.endswith(".local"):
+        raise ValueError("Local/private hosts are not allowed.")
+
+    try:
+        ip_obj = ipaddress.ip_address(host)
+        if not ip_obj.is_global or ip_obj.is_multicast:
+            raise ValueError("Private or non-routable IP addresses are not allowed.")
+    except ValueError:
+        # Not an IP literal; resolve hostname and ensure all resolved IPs are public.
+        try:
+            addrinfos = socket.getaddrinfo(host, None)
+        except socket.gaierror:
+            raise ValueError("Unable to resolve URL hostname.")
+
+        resolved_ips = {ai[4][0] for ai in addrinfos if ai and ai[4]}
+        if not resolved_ips:
+            raise ValueError("Unable to resolve URL hostname.")
+
+        for ip in resolved_ips:
+            ip_obj = ipaddress.ip_address(ip)
+            if (
+                ip_obj.is_private
+                or ip_obj.is_loopback
+                or ip_obj.is_link_local
+                or ip_obj.is_multicast
+                or ip_obj.is_reserved
+                or ip_obj.is_unspecified
+            ):
+                raise ValueError("URL host resolves to a private/non-routable address.")
+
+    return url
 
 
 def pre_processing(loader):
@@ -84,7 +138,8 @@ def pre_process_url_data(urls):
         output: Glance Summary of the fetched URL.
     """
     try:
-        loader = WebBaseLoader(urls)
+        validated_urls = [_validate_external_url(u) for u in urls]
+        loader = WebBaseLoader(validated_urls)
         global summ_vectorstore
         # Common Helper function for processing data.
         summ_vectorstore = pre_processing(loader)
