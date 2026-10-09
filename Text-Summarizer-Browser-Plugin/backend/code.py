@@ -46,14 +46,7 @@ def _validate_external_url(url: str) -> str:
 
     try:
         ip_obj = ipaddress.ip_address(host)
-        if (
-            ip_obj.is_private
-            or ip_obj.is_loopback
-            or ip_obj.is_link_local
-            or ip_obj.is_multicast
-            or ip_obj.is_reserved
-            or ip_obj.is_unspecified
-        ):
+        if not ip_obj.is_global or ip_obj.is_multicast:
             raise ValueError("Private or non-routable IP addresses are not allowed.")
     except ValueError:
         # Not an IP literal; resolve hostname and ensure all resolved IPs are public.
