@@ -434,15 +434,24 @@ digraph PodcastRAG {
 def _validate_external_feed_url(url: str) -> str:
     """
     Validate user-provided feed URL to mitigate SSRF.
-    Allows only public http/https endpoints.
+    Allows only public http/https endpoints and approved feed URLs.
     """
-    parsed = urlparse((url or "").strip())
+    normalized_url = (url or "").strip()
+    parsed = urlparse(normalized_url)
 
     if parsed.scheme not in ("http", "https"):
         raise ValueError("Only http/https RSS feed URLs are allowed.")
 
     if not parsed.hostname:
         raise ValueError("RSS feed URL must include a valid hostname.")
+
+    # Enforce server-side allowlist for full URL to prevent arbitrary outbound requests.
+    allowed_urls_raw = os.getenv("ALLOWED_PODCAST_FEED_URLS", "")
+    allowed_urls = {u.strip() for u in allowed_urls_raw.split(",") if u.strip()}
+    if not allowed_urls:
+        raise ValueError("No allowed podcast feed URLs are configured on the server.")
+    if normalized_url not in allowed_urls:
+        raise ValueError("This RSS feed URL is not in the server allowlist.")
 
     host = parsed.hostname.strip().lower()
     if host == "localhost" or host.endswith(".local"):
@@ -482,7 +491,7 @@ def _validate_external_feed_url(url: str) -> str:
             ):
                 raise ValueError("RSS feed host resolves to a private/non-routable address.")
 
-    return url
+    return normalized_url
 
 
 def select_podcast_episode(PODCAST_URL):
