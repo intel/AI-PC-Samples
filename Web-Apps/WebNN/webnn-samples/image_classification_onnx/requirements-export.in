@@ -1,0 +1,4 @@
+# Direct requirements for the ONNX model-export helper.
+optimum==2.1.0
+optimum-onnx==0.1.0
+huggingface_hub==0.25.2
