@@ -5,9 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "torch>=2.9.1",
-    "torchvision>=0.24.1",
+    "torch>=2.14.0",
+    "torchvision>=0.29.0",
     "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
+    "triton-xpu>=3.8.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
     "datasets>=5.0.1",
     "jupyter>=1.1.1",
     "lab>=8.4",
@@ -26,8 +27,10 @@ dependencies = [
     "pyarrow>=23.0.1",
     "pygments>=2.20.0",
     "soupsieve>=2.9.0",
-    "jupyterlab>=4.6.2",
-    "tornado>=6.5.8",
+    "jupyterlab>=4.6.4",
+    "notebook>=7.6.3",
+    "multidict>=6.9.1",
+    "tornado>=6.5.9",
 ]
 [tool.uv.sources]
 torch = [
@@ -37,6 +40,9 @@ torchvision = [
   { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
 ]
 pytorch-triton-xpu = [
+  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+]
+triton-xpu = [
   { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
 ]
 

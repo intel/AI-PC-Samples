@@ -30,6 +30,7 @@ dependencies = [
     "ipywidgets>=8.1.9",
     "tornado==6.5.9",
     "requests>=2.32.0",
+    "urllib3>=2.8.0",
     "IPython>=9.17.1",
     "numpy>=1.26",
 ]
