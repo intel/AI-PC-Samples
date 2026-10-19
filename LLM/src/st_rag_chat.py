@@ -11,10 +11,28 @@ import os
 import warnings
 import ollama
 import hashlib
+from pathlib import Path
 
 warnings.filterwarnings("ignore")
 
 OLLAMA_BASE_URL = "http://localhost:11434"
+LOCAL_DATA_SUFFIXES = {".txt", ".pdf", ".md"}
+
+
+def _trusted_local_data_files():
+    data_dir = (Path(__file__).resolve().parent.parent / "data").resolve()
+    if not data_dir.is_dir():
+        return {}
+
+    trusted_files = {}
+    for candidate in data_dir.iterdir():
+        if candidate.suffix.lower() not in LOCAL_DATA_SUFFIXES:
+            continue
+        resolved_candidate = candidate.resolve()
+        if resolved_candidate.is_file() and resolved_candidate.parent == data_dir:
+            trusted_files[candidate.name] = resolved_candidate
+    return trusted_files
+
 
 st.header("LLM RAG Chat Interface 🐻‍❄️💬")
 
@@ -42,19 +60,13 @@ if source_type == "URL":
     source_path = st.text_input("Enter the URL to load for RAG:", key="url_path")
 else:
     # Show available files in data folder
-    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Go up to LLM folder
-    data_dir = os.path.join(current_dir, "data")
-    if os.path.exists(data_dir):
-        files = [f for f in os.listdir(data_dir) if f.endswith(('.txt', '.pdf', '.md'))]
-        if files:
-            st.write("Available files in data folder:")
-            source_path = st.selectbox("Select a file:", files, key="file_selection")
-            st.info(f"Selected file: {source_path}")
-        else:
-            st.warning("No supported files (.txt, .pdf, .md) found in data folder")
-            source_path = None
+    local_files = _trusted_local_data_files()
+    if local_files:
+        st.write("Available files in data folder:")
+        source_path = st.selectbox("Select a file:", sorted(local_files), key="file_selection")
+        st.info(f"Selected file: {source_path}")
     else:
-        st.error("Data folder not found. Please create a 'data' folder in the parent directory and add your files.")
+        st.warning("No supported files (.txt, .pdf, .md) found in the data folder")
         source_path = None
 
 # Select embedding type
@@ -90,28 +102,21 @@ def load_document(source_path, source_type="URL"):
         # Load from local file in data folder
         if not source_path:
             raise ValueError("A local filename must be provided.")
-        # Reject absolute paths and any path separators before joining
-        if os.path.isabs(source_path) or os.path.basename(source_path) != source_path:
-            raise ValueError("Only filenames from the data directory are allowed.")
-        if not source_path.lower().endswith((".txt", ".pdf", ".md")):
-            raise ValueError("Only .txt, .pdf, and .md files are supported.")
-        current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Go up to LLM folder
-        data_dir = os.path.abspath(os.path.join(current_dir, "data"))
-        full_path = os.path.abspath(os.path.normpath(os.path.join(data_dir, source_path)))
-
-        if os.path.commonpath([data_dir, full_path]) != data_dir:
-            raise ValueError("Access to files outside the data directory is not allowed.")
-
-        if not os.path.exists(full_path):
-            raise FileNotFoundError(f"File not found: {full_path}")
+        full_path = None
+        for filename, candidate in _trusted_local_data_files().items():
+            if source_path == filename:
+                full_path = candidate
+                break
+        if full_path is None:
+            raise ValueError("Select a supported file from the data directory.")
 
         print(f"Loading document from: {full_path}")
         st.markdown(f''' :green[Loading document from: {full_path}] ''')
 
-        if source_path.endswith('.pdf'):
-            loader = PyPDFLoader(full_path)
+        if full_path.suffix.lower() == '.pdf':
+            loader = PyPDFLoader(str(full_path))
         else:
-            loader = TextLoader(full_path, encoding='utf-8')
+            loader = TextLoader(str(full_path), encoding='utf-8')
 
         return loader.load()
 
