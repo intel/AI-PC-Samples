@@ -4,6 +4,7 @@ import json
 import shutil
 import logging
 import warnings
+from pathlib import Path
 import numpy as np
 import ollama
 import cv2
@@ -89,6 +90,29 @@ DATABASE_PATH = "./Video_descriptions_database_ollama"
 COLLECTION_NAME = "Video_descriptions_ollama"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 VIDEO_DATASET_ROOT = os.path.abspath(os.path.dirname(__file__))
+VIDEO_EXTENSIONS = {'.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv'}
+
+
+def _is_path_within(root: Path, candidate: Path) -> bool:
+    try:
+        candidate.resolve().relative_to(root.resolve())
+    except ValueError:
+        return False
+    return True
+
+
+def _trusted_video_folders():
+    root = Path(VIDEO_DATASET_ROOT).resolve()
+    if not root.is_dir():
+        return {}
+
+    folders = {".": root}
+    for candidate in root.iterdir():
+        resolved_candidate = candidate.resolve()
+        if resolved_candidate.is_dir() and _is_path_within(root, resolved_candidate):
+            folders[candidate.name] = resolved_candidate
+    return folders
+
 
 # Page config
 st.set_page_config(
@@ -304,29 +328,36 @@ def generate_video_description_ollama(video_path, model, max_tokens=100, tempera
 def get_video_paths(folder, max_count):
     """Get video file paths from a folder under the video demo directory."""
     try:
-        video_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv']
         video_files = []
 
         requested_folder = folder.strip() if folder else "."
-        # Reject absolute paths and any path separators before joining
-        if os.path.isabs(requested_folder) or os.path.basename(requested_folder) != requested_folder:
-            logging.error("Invalid video folder: only simple directory names are allowed.")
-            return []
-        root_real = os.path.realpath(VIDEO_DATASET_ROOT)
-        folder_path = os.path.realpath(os.path.join(VIDEO_DATASET_ROOT, requested_folder))
-        if not (folder_path.startswith(root_real + os.sep) or folder_path == root_real):
-            logging.error(f"Attempted access outside the video dataset root: {folder_path}")
-            return []
-
-        if not os.path.isdir(folder_path):
-            logging.error(f"Video folder does not exist: {folder_path}")
+        folder_path = None
+        for folder_name, candidate in _trusted_video_folders().items():
+            if requested_folder == folder_name:
+                folder_path = candidate
+                break
+        if folder_path is None:
+            logging.error("Invalid video folder selection.")
             return []
 
-        for root, dirs, files in os.walk(folder_path):
-            video_files.extend([
-                os.path.join(root, f) for f in files
-                if any(f.lower().endswith(ext) for ext in video_extensions)
-            ])
+        root = Path(VIDEO_DATASET_ROOT).resolve()
+        for current_root, directories, files in os.walk(folder_path, followlinks=False):
+            current_path = Path(current_root)
+            trusted_directories = []
+            for directory in directories:
+                candidate = (current_path / directory).resolve()
+                if candidate.is_dir() and _is_path_within(root, candidate):
+                    trusted_directories.append(directory)
+            directories[:] = trusted_directories
+
+            for filename in files:
+                candidate = (current_path / filename).resolve()
+                if (
+                    candidate.is_file()
+                    and candidate.suffix.lower() in VIDEO_EXTENSIONS
+                    and _is_path_within(root, candidate)
+                ):
+                    video_files.append(str(candidate))
 
         if len(video_files) > max_count:
             video_files = video_files[:max_count]
