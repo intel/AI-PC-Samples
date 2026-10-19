@@ -11,6 +11,7 @@ import ipaddress
 import socket
 from datetime import datetime, timezone, timedelta
 import os
+import hmac
 import io
 import re
 import math
@@ -31,11 +32,6 @@ import soundfile as sf
 # Suppress known third-party deprecation warnings that are not actionable from app code
 warnings.filterwarnings("ignore", message="pkg_resources is deprecated", category=UserWarning)
 warnings.filterwarnings("ignore", message='Field name "schema"', category=UserWarning)
-try:
-    import urllib3
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-except Exception:
-    pass
 
 try:
     import ollama
@@ -170,6 +166,12 @@ def save_cached_transcription(cache_key, transcription_parts, source_meta):
 
 
 OLLAMA_HOST = "http://localhost:11434"
+WHISPER_MODEL_ID = "openai/whisper-base"
+WHISPER_MODEL_REVISION = "e37978b90ca9030d5170a5c07aadb050351a65bb"
+SPEECHT5_MODEL_ID = "microsoft/speecht5_tts"
+SPEECHT5_MODEL_REVISION = "30fcde30f19b87502b8435427b5f5068e401d5f6"
+CMU_ARCTIC_DATASET_ID = "Matthijs/cmu-arctic-xvectors"
+CMU_ARCTIC_DATASET_REVISION = "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5"
 
 
 class OllamaLLM:
@@ -431,12 +433,38 @@ digraph PodcastRAG {
 # ========================================
 
 
+def _is_public_ip_address(ip_obj) -> bool:
+    return not (
+        ip_obj.is_private
+        or ip_obj.is_loopback
+        or ip_obj.is_link_local
+        or ip_obj.is_multicast
+        or ip_obj.is_reserved
+        or ip_obj.is_unspecified
+    )
+
+
+def _get_server_allowed_feed_url(requested_url: str) -> str:
+    normalized_request = (requested_url or "").strip()
+    allowed_urls_raw = os.getenv("ALLOWED_PODCAST_FEED_URLS", "")
+    allowed_urls = tuple(url.strip() for url in allowed_urls_raw.split(",") if url.strip())
+
+    if not allowed_urls:
+        raise ValueError("No allowed podcast feed URLs are configured on the server.")
+
+    for allowed_url in allowed_urls:
+        if hmac.compare_digest(normalized_request, allowed_url):
+            return allowed_url
+
+    raise ValueError("This RSS feed URL is not in the server allowlist.")
+
+
 def _validate_external_feed_url(url: str) -> str:
     """
     Validate user-provided feed URL to mitigate SSRF.
     Allows only public http/https endpoints and approved feed URLs.
     """
-    normalized_url = (url or "").strip()
+    normalized_url = _get_server_allowed_feed_url(url)
     parsed = urlparse(normalized_url)
 
     if parsed.scheme not in ("http", "https"):
@@ -445,29 +473,12 @@ def _validate_external_feed_url(url: str) -> str:
     if not parsed.hostname:
         raise ValueError("RSS feed URL must include a valid hostname.")
 
-    # Enforce server-side allowlist for full URL to prevent arbitrary outbound requests.
-    allowed_urls_raw = os.getenv("ALLOWED_PODCAST_FEED_URLS", "")
-    allowed_urls = {u.strip() for u in allowed_urls_raw.split(",") if u.strip()}
-    if not allowed_urls:
-        raise ValueError("No allowed podcast feed URLs are configured on the server.")
-    if normalized_url not in allowed_urls:
-        raise ValueError("This RSS feed URL is not in the server allowlist.")
-
     host = parsed.hostname.strip().lower()
     if host == "localhost" or host.endswith(".local"):
         raise ValueError("Local/private hosts are not allowed.")
 
     try:
         ip_obj = ipaddress.ip_address(host)
-        if (
-            ip_obj.is_private
-            or ip_obj.is_loopback
-            or ip_obj.is_link_local
-            or ip_obj.is_multicast
-            or ip_obj.is_reserved
-            or ip_obj.is_unspecified
-        ):
-            raise ValueError("Private or non-routable IP addresses are not allowed.")
     except ValueError:
         # Not an IP literal; resolve hostname and ensure all resolved IPs are public.
         try:
@@ -480,18 +491,21 @@ def _validate_external_feed_url(url: str) -> str:
             raise ValueError("Unable to resolve RSS feed hostname.")
 
         for ip in resolved_ips:
-            ip_obj = ipaddress.ip_address(ip)
-            if (
-                ip_obj.is_private
-                or ip_obj.is_loopback
-                or ip_obj.is_link_local
-                or ip_obj.is_multicast
-                or ip_obj.is_reserved
-                or ip_obj.is_unspecified
-            ):
+            if not _is_public_ip_address(ipaddress.ip_address(ip)):
                 raise ValueError("RSS feed host resolves to a private/non-routable address.")
+    else:
+        if not _is_public_ip_address(ip_obj):
+            raise ValueError("Private or non-routable IP addresses are not allowed.")
 
     return normalized_url
+
+
+def _download_feed_content(feed_url: str, *, verify=True) -> bytes:
+    with requests.get(feed_url, timeout=20, verify=verify, allow_redirects=False) as response:
+        if response.is_redirect:
+            raise ValueError("Podcast feed redirects are not allowed.")
+        response.raise_for_status()
+        return response.content
 
 
 def select_podcast_episode(PODCAST_URL):
@@ -511,21 +525,17 @@ def select_podcast_episode(PODCAST_URL):
         PODCAST_URL = _validate_external_feed_url(PODCAST_URL)
         logging.info(f" Found podcast URL.")
 
-        # Pre-fetch via requests so we can handle SSL certificate errors gracefully.
-        # feedparser's internal urllib does not recover from SSL failures on machines
-        # that lack a trusted CA bundle (e.g. corporate proxies, fresh Windows installs).
+        # Pre-fetch via requests so we can use certifi when a local CA bundle is missing.
         try:
-            _resp = requests.get(PODCAST_URL, timeout=20)
-            _resp.raise_for_status()
-            feed = feedparser.parse(_resp.content)
+            feed_content = _download_feed_content(PODCAST_URL)
         except requests.exceptions.SSLError as _ssl_err:
             logging.warning(
                 f" SSL certificate verification failed ({_ssl_err}). "
                 "Retrying with certifi's CA bundle (does not disable verification)."
             )
-            _resp = requests.get(PODCAST_URL, timeout=20, verify=certifi.where())
-            _resp.raise_for_status()
-            feed = feedparser.parse(_resp.content)
+            feed_content = _download_feed_content(PODCAST_URL, verify=certifi.where())
+
+        feed = feedparser.parse(feed_content)
 
         if getattr(feed, "bozo", False):
             logging.warning(f" Feed parser warning: {feed.bozo_exception}")
@@ -544,8 +554,9 @@ def select_podcast_episode(PODCAST_URL):
                     if t:
                         try:
                             pub_dt = datetime(*t[:6], tzinfo=timezone.utc)
-                        except Exception:
-                            pass
+                        except (TypeError, ValueError, OverflowError):
+                            logging.warning("Ignoring an invalid %s value in the podcast feed.", date_field)
+                            continue
                         break
                 episodes.append({
                     "title": entry.title,
@@ -662,11 +673,17 @@ def initialize_audio_models():
         Exception: Raises an exception if there is any error during model or processor initialization.
     """
     try:
-        model_id = "openai/whisper-base"
+        model_id = WHISPER_MODEL_ID
         device = "xpu" if torch.xpu.is_available() else "cpu"
         logging.info(f" ASR device selected: {device} (torch.xpu.is_available()={torch.xpu.is_available()})")
-        processor = WhisperProcessor.from_pretrained(pretrained_model_name_or_path=model_id)
-        model = WhisperForConditionalGeneration.from_pretrained(pretrained_model_name_or_path=model_id)
+        processor = WhisperProcessor.from_pretrained(
+            pretrained_model_name_or_path=model_id,
+            revision=WHISPER_MODEL_REVISION,
+        )
+        model = WhisperForConditionalGeneration.from_pretrained(
+            pretrained_model_name_or_path=model_id,
+            revision=WHISPER_MODEL_REVISION,
+        )
         model = model.to(device)
         logging.info(" Model loaded!")
         return model, processor
@@ -855,8 +872,18 @@ def initialize_tts_models():
             raise RuntimeError("The 'datasets' package is not available. Install dependency 'datasets'.")
         device = "xpu" if torch.xpu.is_available() else "cpu"
         torch_dtype = torch.float16 if torch.xpu.is_available() else torch.float32
-        synthesiser = pipeline("text-to-speech", "microsoft/speecht5_tts", device=device, torch_dtype=torch_dtype)
-        embeddings_dataset = load_dataset("Matthijs/cmu-arctic-xvectors", split="validation")
+        synthesiser = pipeline(
+            "text-to-speech",
+            SPEECHT5_MODEL_ID,
+            revision=SPEECHT5_MODEL_REVISION,
+            device=device,
+            torch_dtype=torch_dtype,
+        )
+        embeddings_dataset = load_dataset(
+            CMU_ARCTIC_DATASET_ID,
+            revision=CMU_ARCTIC_DATASET_REVISION,
+            split="validation",
+        )
         speaker_embedding = torch.tensor(embeddings_dataset[7306]["xvector"]).unsqueeze(0).to(device, torch_dtype)
         logging.info(" TTS models loaded!")
         return synthesiser, speaker_embedding

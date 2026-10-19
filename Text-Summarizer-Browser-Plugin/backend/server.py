@@ -52,8 +52,9 @@ def process_url():
             return jsonify({'message': 'No URL provided'}), 400
         try:
             _validate_external_url(url)
-        except ValueError as e:
-            return jsonify({'message': f'Invalid URL: {e}'}), 400
+        except ValueError:
+            app.logger.warning('Rejected an invalid URL request.')
+            return jsonify({'message': 'Invalid URL provided'}), 400
         chromadb.api.client.SharedSystemClient.clear_system_cache()
         return Response(stream_output(pre_process_url_data, [url]), content_type='text/event-stream')
 
