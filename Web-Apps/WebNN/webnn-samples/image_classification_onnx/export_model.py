@@ -50,7 +50,7 @@ def main():
         str(ONNX_MODEL_PATH),
         input_names=["pixel_values"],
         output_names=["logits"],
-        dynamic_axes={"pixel_values": {0: "batch_size"}, "logits": {0: "batch_size"}},
+        dynamic_axes={"pixel_values": {0: "batch"}, "logits": {0: "batch"}},
         opset_version=17,
         dynamo=False,
     )
