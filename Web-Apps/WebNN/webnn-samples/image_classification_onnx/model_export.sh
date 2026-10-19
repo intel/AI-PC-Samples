@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-SCRIPT_DIRECTORY="$(cd -- "$(dirname -- "$0")" && pwd)"
+SCRIPT_DIRECTORY="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIRECTORY"
 
 # Install the fully resolved, hash-pinned export toolchain.
