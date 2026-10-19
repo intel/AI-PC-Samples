@@ -5,10 +5,11 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "torch>=2.9.1",
+    "torch>=2.14.0",
     "pytorch-triton-xpu>=3.5.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
-    "torchvision>=0.24.1",
+    "torchvision>=0.29.0",
     "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
+    "triton-xpu>=3.8.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
     "jupyter>=1.1.1",
     "feedparser>=6.0.11",
     "torchaudio>=2.9.1",
@@ -24,6 +25,8 @@ dependencies = [
     "openvino>=2025.4.1",
     "openai>=3.6.0",
     "datasets>=5.0.1",
+    "fsspec>=2026.6.0",
+    "multidict>=6.9.1",
 ]
 
 [tool.uv.sources]
@@ -34,6 +37,9 @@ torchvision = [
   { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
 ]
 pytorch-triton-xpu = [
+  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+]
+triton-xpu = [
   { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
 ]
 torchaudio = [
