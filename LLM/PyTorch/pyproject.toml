@@ -8,8 +8,8 @@ dependencies = [
     "ipykernel>=6.29.5",
     "ipywidgets>=8.1.5",
     "jupyterlab>=4.6.2",
-    "torch>=2.9.1",
-    "torchvision>=0.24.1",
+    "torch>=2.14.0",
+    "torchvision>=0.29.0",
     "torchaudio>=2.9.1",
     "transformers>=5.10.0",
     "accelerate>=1.4.0",
@@ -17,6 +17,7 @@ dependencies = [
     "librosa>=0.11.0",
     "soundfile>=0.13.1",
     "pytorch-triton-xpu>=3.2.0 ; sys_platform == 'linux'",
+    "triton-xpu>=3.8.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
     "gtts>=2.5.4",
     "sounddevice>=0.5.2",
     "mistune>=3.3.0",
@@ -46,6 +47,9 @@ torchaudio = [
 ]
 pytorch-triton-xpu = [
   { index = "pytorch-xpu", marker = "sys_platform == 'linux'" },
+]
+triton-xpu = [
+  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
 ]
 
 [[tool.uv.index]]
