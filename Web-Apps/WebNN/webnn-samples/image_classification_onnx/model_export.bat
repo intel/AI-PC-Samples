@@ -1,12 +1,16 @@
-:: install optimum exporters cli tools
-pip uninstall optimum
-pip install optimum[exporters]
+@echo off
+setlocal
+pushd "%~dp0" || exit /b 1
 
-:: downgrade huggingface_hub to work-around cached_download import error
-pip uninstall huggingface_hub
-pip install huggingface_hub==0.25.2
+REM Install the fully resolved, hash-pinned export toolchain.
+pip install --require-hashes -r requirements-export.txt
+if errorlevel 1 (
+    popd
+    exit /b 1
+)
 
-:: export HF image classification models to ONNX
-optimum-cli export onnx --model google/mobilenet_v2_1.0_224 google_mobilenet_v2_1.0_224
-::optimum-cli export onnx --model facebook/convnextv2-atto-1k-224 facebook_convnextv2-atto-1k-224
-::optimum-cli export onnx --model microsoft/resnet-18 microsoft_resnet-18
+REM Export the pinned Hugging Face image-classification model to ONNX.
+python export_model.py
+set "exit_code=%errorlevel%"
+popd
+exit /b %exit_code%
