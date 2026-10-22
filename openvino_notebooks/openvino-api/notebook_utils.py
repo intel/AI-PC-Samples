@@ -153,11 +153,21 @@ def download_file(
             desc=str(filename),
             disable=not show_progress,
         ) as progress_bar:
-            with open(filepath, "wb") as file_object:
-                for chunk in response.iter_content(chunk_size):
-                    file_object.write(chunk)
-                    progress_bar.update(len(chunk))
-                    progress_bar.refresh()
+            from tempfile import NamedTemporaryFile
+
+            temporary_path = None
+            try:
+                with NamedTemporaryFile(dir=filepath.parent, delete=False) as file_object:
+                    temporary_path = Path(file_object.name)
+                    for chunk in response.iter_content(chunk_size):
+                        file_object.write(chunk)
+                        progress_bar.update(len(chunk))
+                        progress_bar.refresh()
+                temporary_path.replace(filepath)
+            finally:
+                response.close()
+                if temporary_path is not None:
+                    temporary_path.unlink(missing_ok=True)
     else:
         print(f"'{filepath}' already exists.")
 
