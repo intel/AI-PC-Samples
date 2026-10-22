@@ -1,0 +1,43 @@
+[project]
+name = "pytorch-to-openvino"
+version = "0.1.0"
+description = "Convert PyTorch models to OpenVINO IR notebook"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "certifi>=2026.10.19",
+    "openvino>=2026.2.0",
+    "torch==2.8.0",
+    "torchvision==0.23.0",
+    "scipy>=1.11",
+    "Pillow>=13.0.0",
+
+    "jupyterlab>=4.6.4",
+    "jupyter_server>=2.21.0",
+    "notebook>=7.6.3",
+    "jupyter_client>=8.6",
+    "ipykernel>=6.29",
+    "ipywidgets>=8.1",
+
+    "requests>=2.31",
+    "tqdm>=4.66",
+    "IPython>=8.20",
+    "numpy>=1.26",
+    "tornado>=6.5.9",
+    "urllib3>=2.8.0",
+]
+
+[tool.uv]
+required-version = ">=0.5.0"
+# Works on any filesystem; hardlinking fails under OneDrive/network drives (os error 396)
+link-mode = "copy"
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+torchvision = [{ index = "pytorch-cpu" }]
