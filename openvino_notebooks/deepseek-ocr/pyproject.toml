@@ -20,7 +20,7 @@ dependencies = [
     "easydict>=1.13",
     "PyMuPDF>=1.28.2",
     "gradio>=6.15.0,<7",
-    "pillow>=12.3.0",
+    "pillow>=13.0.0",
     "matplotlib>=3.9",
     "jupyterlab>=4.6.3",
     "jupyter_server>=2.21.0",
@@ -38,3 +38,5 @@ dependencies = [
 [tool.uv]
 required-version = ">=0.5.0"
 link-mode = "copy"
+# Gradio's published Pillow<13 bound is stale; Pillow 13 is required by fixed advisories.
+override-dependencies = ["pillow>=13.0.0"]

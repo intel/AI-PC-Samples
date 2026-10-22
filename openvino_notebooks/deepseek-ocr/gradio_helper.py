@@ -274,7 +274,7 @@ def make_demo(model, tokenizer):
             with gr.Column(scale=2):
                 with gr.Tabs():
                     with gr.Tab("📝 Text"):
-                        text_out = gr.Textbox(lines=20, show_copy_button=True, show_label=False)
+                        text_out = gr.Textbox(lines=20, show_label=False)
                     with gr.Tab("🎨 Markdown"):
                         md_out = gr.Markdown("")
                     with gr.Tab("🖼️ Boxes"):
@@ -282,7 +282,7 @@ def make_demo(model, tokenizer):
                     with gr.Tab("🖼️ Cropped Images"):
                         gallery = gr.Gallery(show_label=False, columns=3, height=400)
                     with gr.Tab("🔍 Raw"):
-                        raw_out = gr.Textbox(lines=20, show_copy_button=True, show_label=False)
+                        raw_out = gr.Textbox(lines=20, show_label=False)
 
         gr.Examples(
             examples=[["ocr.jpg", "Gundam", "📋 Markdown", ""], ["reachy-mini.jpg", "Gundam", "📍 Locate", "Robot"]],
