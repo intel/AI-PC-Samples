@@ -3,8 +3,14 @@ Podcast RAG Streamlit Application
 Based on Podcast_RAG.ipynb notebook structure
 """
 
+import warnings
+
+# Must run before importing teapotai/pydantic, which emit these warnings at import time
+warnings.filterwarnings("ignore", message="pkg_resources is deprecated", category=UserWarning)
+warnings.filterwarnings("ignore", message='Field name "schema"', category=UserWarning)
+
 from transformers import WhisperProcessor, WhisperForConditionalGeneration, pipeline
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from collections import Counter
 from teapotai import TeapotAI
 import ipaddress
@@ -19,7 +25,6 @@ import json
 import time
 import certifi
 import hashlib
-import warnings
 import torch
 import logging
 import requests
@@ -28,10 +33,6 @@ import torchaudio
 import numpy as np
 import streamlit as st
 import soundfile as sf
-
-# Suppress known third-party deprecation warnings that are not actionable from app code
-warnings.filterwarnings("ignore", message="pkg_resources is deprecated", category=UserWarning)
-warnings.filterwarnings("ignore", message='Field name "schema"', category=UserWarning)
 
 try:
     import ollama
@@ -465,6 +466,12 @@ def _validate_external_feed_url(url: str) -> str:
     Allows only public http/https endpoints and approved feed URLs.
     """
     normalized_url = _get_server_allowed_feed_url(url)
+    return _validate_public_http_url(normalized_url)
+
+
+def _validate_public_http_url(url: str) -> str:
+    """Ensure the URL is http/https and its host resolves only to public IP addresses."""
+    normalized_url = url
     parsed = urlparse(normalized_url)
 
     if parsed.scheme not in ("http", "https"):
@@ -500,12 +507,23 @@ def _validate_external_feed_url(url: str) -> str:
     return normalized_url
 
 
+MAX_FEED_REDIRECTS = 5
+
+
 def _download_feed_content(feed_url: str, *, verify=True) -> bytes:
-    with requests.get(feed_url, timeout=20, verify=verify, allow_redirects=False) as response:
-        if response.is_redirect:
-            raise ValueError("Podcast feed redirects are not allowed.")
-        response.raise_for_status()
-        return response.content
+    # Redirects are followed manually so every hop is re-validated as a public http/https URL.
+    current_url = feed_url
+    for _ in range(MAX_FEED_REDIRECTS + 1):
+        with requests.get(current_url, timeout=20, verify=verify, allow_redirects=False) as response:
+            if response.is_redirect:
+                location = response.headers.get("Location", "")
+                if not location:
+                    raise ValueError("Podcast feed redirect is missing a Location header.")
+                current_url = _validate_public_http_url(urljoin(current_url, location))
+                continue
+            response.raise_for_status()
+            return response.content
+    raise ValueError("Podcast feed redirected too many times.")
 
 
 def select_podcast_episode(PODCAST_URL):

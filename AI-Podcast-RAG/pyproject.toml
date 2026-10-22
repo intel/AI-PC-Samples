@@ -27,6 +27,7 @@ dependencies = [
     "datasets>=5.0.1",
     "fsspec>=2026.6.0",
     "multidict>=6.9.1",
+    "setuptools<82",
 ]
 
 [tool.uv.sources]
