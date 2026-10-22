@@ -8,8 +8,8 @@ requires-python = ">=3.12"
 dependencies = [
     "certifi>=2026.10.19",
     "openvino>=2026.2.0",
-    "torch==2.8.0",
-    "torchvision==0.23.0",
+    "torch==2.13.0",
+    "torchvision==0.28.0",
     "scipy>=1.11",
     "Pillow>=13.0.0",
 

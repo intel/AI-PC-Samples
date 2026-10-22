@@ -14,7 +14,7 @@ dependencies = [
     "jupyter-server>=2.21.0",
     "ipykernel",
     "mistune>=3.3.0",
-    "pillow>=12.3.0",
+    "pillow>=13.0.0",
     "setuptools>=83.0.0",
     "tornado>=6.5.8"
 ]
