@@ -450,8 +450,10 @@ def _get_server_allowed_feed_url(requested_url: str) -> str:
     allowed_urls_raw = os.getenv("ALLOWED_PODCAST_FEED_URLS", "")
     allowed_urls = tuple(url.strip() for url in allowed_urls_raw.split(",") if url.strip())
 
+    # The allowlist is opt-in: without it, any public http/https feed is accepted
+    # (the public-address checks in _validate_public_http_url still apply).
     if not allowed_urls:
-        raise ValueError("No allowed podcast feed URLs are configured on the server.")
+        return normalized_request
 
     for allowed_url in allowed_urls:
         if hmac.compare_digest(normalized_request, allowed_url):
@@ -463,7 +465,8 @@ def _get_server_allowed_feed_url(requested_url: str) -> str:
 def _validate_external_feed_url(url: str) -> str:
     """
     Validate user-provided feed URL to mitigate SSRF.
-    Allows only public http/https endpoints and approved feed URLs.
+    Allows only public http/https endpoints, restricted further to the
+    ALLOWED_PODCAST_FEED_URLS allowlist when that variable is set.
     """
     normalized_url = _get_server_allowed_feed_url(url)
     return _validate_public_http_url(normalized_url)
