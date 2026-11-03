@@ -450,10 +450,9 @@ def _get_server_allowed_feed_url(requested_url: str) -> str:
     allowed_urls_raw = os.getenv("ALLOWED_PODCAST_FEED_URLS", "")
     allowed_urls = tuple(url.strip() for url in allowed_urls_raw.split(",") if url.strip())
 
-    # The allowlist is opt-in: without it, any public http/https feed is accepted
-    # (the public-address checks in _validate_public_http_url still apply).
+    # Enforce a server-side allowlist to prevent user-controlled outbound destinations.
     if not allowed_urls:
-        return normalized_request
+        raise ValueError("Server allowlist is not configured. Set ALLOWED_PODCAST_FEED_URLS.")
 
     for allowed_url in allowed_urls:
         if hmac.compare_digest(normalized_request, allowed_url):
