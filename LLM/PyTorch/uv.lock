@@ -331,8 +331,8 @@ dependencies = [
     { name = "torch", version = "2.14.1+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "torchaudio", version = "2.11.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
     { name = "torchaudio", version = "2.11.0+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "torchvision", version = "0.29.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
-    { name = "torchvision", version = "0.29.1+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "torchvision", version = "0.29.2", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
+    { name = "torchvision", version = "0.29.2+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "tornado" },
     { name = "transformers" },
     { name = "triton-xpu", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -2341,7 +2341,7 @@ wheels = [
 
 [[package]]
 name = "torchvision"
-version = "0.29.0"
+version = "0.29.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "sys_platform != 'linux' and sys_platform != 'win32'",
@@ -2352,12 +2352,12 @@ dependencies = [
     { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" } },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/d2/9daad500db2ab880eca0f0a569afd73e1afdd49f22c94560c85546dd87c2/torchvision-0.29.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:994687b818cac0e6d34cb407a41458e2c3262cb7db927465841c9522ba7ebb92", size = 1813740, upload-time = "2026-09-02T13:47:03.933Z" },
+    { url = "https://files.pythonhosted.org/packages/60/ec/ce97c46e5322b588b95be388f2c21878d014ca20838478e7aab59edd128a/torchvision-0.29.2-py3-none-macosx_14_0_arm64.whl", hash = "sha256:d412494ff011f24c884a3cffd33eba1cb45a0299d4e26c1e175113f9d3b3ebc7", size = 1823414, upload-time = "2026-10-28T15:21:31.892Z" },
 ]
 
 [[package]]
 name = "torchvision"
-version = "0.29.1+xpu"
+version = "0.29.2+xpu"
 source = { registry = "https://download.pytorch.org/whl/xpu" }
 resolution-markers = [
     "sys_platform == 'linux' or sys_platform == 'win32'",
@@ -2368,8 +2368,8 @@ dependencies = [
     { name = "torch", version = "2.14.1+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" } },
 ]
 wheels = [
-    { url = "https://download-r2.pytorch.org/whl/xpu/torchvision-0.29.1%2Bxpu-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:25c8cbd25528a04f8929333634d293868f1e4e826c6456a19e854e2a54081d72", upload-time = "2026-09-30T15:46:46Z" },
-    { url = "https://download-r2.pytorch.org/whl/xpu/torchvision-0.29.1%2Bxpu-cp312-cp312-win_amd64.whl", hash = "sha256:5c25be848e69ce2ece229e84c3785d31b9227354e4c77a94c274b8bcaf345feb", upload-time = "2026-09-30T15:46:46Z" },
+    { url = "https://download-r2.pytorch.org/whl/xpu/torchvision-0.29.2%2Bxpu-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:b15295f0395380f1c460315e116548afb66e1ddaaa5ee2862cccbdcd119b8c7b", upload-time = "2026-10-28T14:19:14Z" },
+    { url = "https://download-r2.pytorch.org/whl/xpu/torchvision-0.29.2%2Bxpu-py3-none-win_amd64.whl", hash = "sha256:f641acaee33eb1b369da755f93e1ee226b835ab7891552144bd077587701c8fc", upload-time = "2026-10-28T14:19:14Z" },
 ]
 
 [[package]]
