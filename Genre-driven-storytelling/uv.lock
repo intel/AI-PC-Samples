@@ -330,7 +330,7 @@ wheels = [
 
 [[package]]
 name = "dpcpp-cpp-rt"
-version = "2026.1.0"
+version = "2026.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "intel-opencl-rt" },
@@ -338,8 +338,8 @@ dependencies = [
     { name = "intel-sycl-rt" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/98/20fffd109174139f7dc5a3413ffca0d71e0ea0837b5d7b62b634aa44ad3d/dpcpp_cpp_rt-2026.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:9e7058dedf18c9cc8e5baff596dc6cf0c532807f3a5934b60e95be2f69ee4014", size = 28712, upload-time = "2026-07-01T15:15:11.919Z" },
-    { url = "https://files.pythonhosted.org/packages/2a/30/0cabcb462472ec50bdb4f3feaa312640a7831d97df73bf789d9eff507eca/dpcpp_cpp_rt-2026.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:77f8b791cb400f0da6d59cd1e56b25b12ea643edf059d5d1f0cb25bc39489b16", size = 58378, upload-time = "2026-07-01T15:10:03.804Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/d7/c19db67c824c49f126b31b61bdd1f1cf9283e671daa254868b48987b6a43/dpcpp_cpp_rt-2026.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:77396a9e5e388bc9f778ec4c1131181966ea5e31fd68ed49b2613844e869dc1c", size = 28712, upload-time = "2026-09-05T10:34:19.508Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/fe/37a95275a8a74053fbbb5de40338e19e0a1191ee6665a093d50c227475be/dpcpp_cpp_rt-2026.1.2-py2.py3-none-win_amd64.whl", hash = "sha256:1eeaceda2d11010a69bd891f12be08bdb4628f6ed3de9b2e53655bf6c19638d1", size = 58378, upload-time = "2026-09-05T10:35:11.818Z" },
 ]
 
 [[package]]
@@ -425,10 +425,10 @@ dependencies = [
     { name = "qwen-vl-utils" },
     { name = "setuptools" },
     { name = "soupsieve" },
-    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
-    { name = "torch", version = "2.14.1+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "torchvision", version = "0.29.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
+    { name = "torch", version = "2.15.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
+    { name = "torch", version = "2.15.0+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "torchvision", version = "0.29.1+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "torchvision", version = "0.29.2", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
     { name = "tornado" },
     { name = "transformers" },
     { name = "triton-xpu", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -553,71 +553,71 @@ wheels = [
 
 [[package]]
 name = "intel-cmplr-lib-rt"
-version = "2026.1.0"
+version = "2026.1.2"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5b/f4/c59236000ce3a470bfcae4053ad96e97c3c9febf2b38e5487046b7f4505f/intel_cmplr_lib_rt-2026.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:8e002aaf89741de3b424bdad51ce60ead21cc8f4dee970fccba88ee3c845692d", size = 40190806, upload-time = "2026-07-01T15:14:46.979Z" },
-    { url = "https://files.pythonhosted.org/packages/e8/a5/f5a2b1bcf943067ee1e073b5f478d719f662b78d19ec436b357cc82a7116/intel_cmplr_lib_rt-2026.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:04c05fc09a32b11e15f1ca6ee0910ac9811e221de33170feb58d45542a8da533", size = 12965113, upload-time = "2026-07-01T15:10:28.188Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/2d/94c431fe41bcc56d9834af652f844721798a139c9f0a7b999e6338aebd0a/intel_cmplr_lib_rt-2026.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:b4a975deeb97eee26c15e7038f63635c4dacc33151506f2e5c56cc5758cbe462", size = 40187843, upload-time = "2026-09-05T10:34:39.237Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/73/72313a120a964ff7ebe0af8d15b464b5b4e04f6a4088b62f620878b8a07e/intel_cmplr_lib_rt-2026.1.2-py2.py3-none-win_amd64.whl", hash = "sha256:7b15df26eb09cf7b99395a14fa3158fc62f274085eaa20f4ec4f667c379b4e30", size = 12976361, upload-time = "2026-09-05T10:35:13.924Z" },
 ]
 
 [[package]]
 name = "intel-cmplr-lib-ur"
-version = "2026.1.0"
+version = "2026.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "umf" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8e/06/da0fcd62ee4672489ede80f322eec61b48a38695b0a5072d6d1075b37197/intel_cmplr_lib_ur-2026.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:74b64ace8277b031aa36328dc8f87f7f959a6ca4da5b68c69923d37283e01664", size = 31555105, upload-time = "2026-07-01T15:14:58.416Z" },
-    { url = "https://files.pythonhosted.org/packages/c3/74/6f8bed53ec47a1159f3cd92de0ee4cbeb1eabb6d29accf97c5dc3983a9bb/intel_cmplr_lib_ur-2026.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:538e1135ee1801fb19fa1a580838a1f666f05534d35350d82736d959373d3b15", size = 1308879, upload-time = "2026-07-01T15:10:19.657Z" },
+    { url = "https://files.pythonhosted.org/packages/80/f0/b7e8305da2d2ea162599795886d03a809bf1554ec5079c59f147b506f277/intel_cmplr_lib_ur-2026.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:b27207f3b42d12ce88cd53ca8b3b7a7e79755aa07a84eccf1c209fcbefe468bf", size = 31636265, upload-time = "2026-09-05T10:34:45.121Z" },
+    { url = "https://files.pythonhosted.org/packages/83/52/bf0781e69da7f02141635b68c16daa7756e980f0ba29f78a7f4332ee3985/intel_cmplr_lib_ur-2026.1.2-py2.py3-none-win_amd64.whl", hash = "sha256:e2ef94d758948a5c52090f723bc113b8614a8a4187f017668d0375b72a8be653", size = 1321751, upload-time = "2026-09-05T10:34:55.501Z" },
 ]
 
 [[package]]
 name = "intel-cmplr-lic-rt"
-version = "2026.1.0"
+version = "2026.1.2"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/9c/cfdfb3429b32fbd2bed7a9bcce2989efa329ca1b87b70e03bc9170650512/intel_cmplr_lic_rt-2026.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:ec9f7c495bda8f5d260442056808ee75cf4c1a145910ce999e0e8964d78ce1ba", size = 18914, upload-time = "2026-07-01T15:15:01.218Z" },
-    { url = "https://files.pythonhosted.org/packages/49/b2/02def0f52f055cb449631c43fc13761f8e11549dbb732dfe0586c7cf9bc5/intel_cmplr_lic_rt-2026.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:19e568a1b37e5080140c2694f990505948b7c0cf08d4090beab70702b76c6a50", size = 49550, upload-time = "2026-07-01T15:10:25.868Z" },
+    { url = "https://files.pythonhosted.org/packages/27/5d/8cae7c2c43d61b0434adc4d68ac56955c3ebd5443c77842fce6abe3ac357/intel_cmplr_lic_rt-2026.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:f4d8ec7bada4e21f1c16555b6a2be7ba1d28a11463dd7bbb57055e0c41c4a2fb", size = 18912, upload-time = "2026-09-05T10:34:36.43Z" },
+    { url = "https://files.pythonhosted.org/packages/b9/d9/8bd39a8087018620429780e68c1dc8394948a399a7dc3253964109727238/intel_cmplr_lic_rt-2026.1.2-py2.py3-none-win_amd64.whl", hash = "sha256:fb8076864a666a8e646cdeb25e724ab82a6aa928abbcf8c1096cc1bba49867ec", size = 49549, upload-time = "2026-09-05T10:35:16.307Z" },
 ]
 
 [[package]]
 name = "intel-opencl-rt"
-version = "2026.1.0"
+version = "2026.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "intel-cmplr-lic-rt" },
     { name = "tbb" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/24/ac/08bb51b090cc1dc3ab24567901610b33d5495c76194e6714e26a2c66390a/intel_opencl_rt-2026.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:b2891b6a6f347f21d2a9f0e872fb97e1aef407b4c34714516994dd884ea5e19e", size = 204358325, upload-time = "2026-07-01T15:15:07.515Z" },
-    { url = "https://files.pythonhosted.org/packages/b4/8f/574738fd8f384c635f50a3f78e5f47763020486960ac83564a954b82bec7/intel_opencl_rt-2026.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:0967dc144f9cdf3aaa0fc722b92a54119cff9867f0b07e8dee8b8c0a88f05e44", size = 109494809, upload-time = "2026-07-01T15:10:08.519Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/3d/895a1628ca64752a235a045a649609d6e3b3f42b1588312225bf2fd7dd48/intel_opencl_rt-2026.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:b543a09209fc157a70eb40f72338862a35cf86ad1ef4808d4e89cf0078bf8947", size = 204251780, upload-time = "2026-09-05T10:34:26.365Z" },
+    { url = "https://files.pythonhosted.org/packages/94/4e/dea179a1beb493fcf5bfc5f4680f5a2660373b8f00be0ce3ec89eeeb3942/intel_opencl_rt-2026.1.2-py2.py3-none-win_amd64.whl", hash = "sha256:9b4da9a4e12e56c5eda5c93c22a8eb0579f5811d27a5d8cc1171303208308320", size = 109497438, upload-time = "2026-09-05T10:35:08.433Z" },
 ]
 
 [[package]]
 name = "intel-openmp"
-version = "2026.1.0"
+version = "2026.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "intel-cmplr-lib-ur" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/23/60aeb428e6b1fb34fb81d4970d91ff8b5deeeeb446e1628bd78f9e3d1f8b/intel_openmp-2026.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:e6887f701b7d2323ed147008893b9af22e511aaa97e0fc9c37eb8be24a5366b0", size = 52547733, upload-time = "2026-07-01T15:14:42.64Z" },
-    { url = "https://files.pythonhosted.org/packages/6e/cc/b4cb4ed4a1cca9dcc63cec93f7813ef3840f37d8bd30c06b8013948edc00/intel_openmp-2026.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:8f9f86d93da9d549eec7bae26d65d6188ed748792ce655b5cdbc2e1a15cb7206", size = 26355044, upload-time = "2026-07-01T15:10:22.582Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/4d/27cb1284bee222fdd4f4280a651c264031bc1f8ebbdbd29cdfd0f906a466/intel_openmp-2026.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:4612231a3605db891265c1d8cc4af49ee66009dc55f24012770a9faf3d8ac35e", size = 52545398, upload-time = "2026-09-05T10:34:33.577Z" },
+    { url = "https://files.pythonhosted.org/packages/0c/a8/7b7c00ac0f74cedf36f8623c5eb57fe43d0e172b8ce939043f63beb1f16e/intel_openmp-2026.1.2-py2.py3-none-win_amd64.whl", hash = "sha256:c5fd1bfb8306f7a21abc7494c700ca117bf4abbde841e48b263904ac50b1d694", size = 26355279, upload-time = "2026-09-05T10:35:02.971Z" },
 ]
 
 [[package]]
 name = "intel-pti"
-version = "1.0.1"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/d4/48737239235707852fef380005f53405740b08dc5f3700c72e5b43946452/intel_pti-1.0.1-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:4e7ad9e955d2dad8e41cd95d22e8ab1e476bae2e6e351f0e8b4653fe77ab2e0c", size = 1372720, upload-time = "2026-07-23T11:03:37.221Z" },
-    { url = "https://files.pythonhosted.org/packages/3a/29/9c8bcb52a74c7eece746770b74dd978e3f3dec70748185ad35572065f85e/intel_pti-1.0.1-py2.py3-none-win_amd64.whl", hash = "sha256:db45adc0a555cd22864f4cfd418ef81cf07a02c78627e6a3cb6387920b352278", size = 786793, upload-time = "2026-07-23T11:03:39.398Z" },
+    { url = "https://files.pythonhosted.org/packages/80/60/a94fd058dfed6c774ab376279a38c1e8822b9b7ab4a9c8e0f5b960f3a8e3/intel_pti-1.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:62bb374068d5e43239db7a75d19e673e21be68603092de6238522cad4ea8c9ca", size = 1771745, upload-time = "2026-08-25T10:33:02.79Z" },
+    { url = "https://files.pythonhosted.org/packages/37/d8/bcb8c6e683bfb272cdc7779b2705b625efe92e707ce6ce072bc9a5159696/intel_pti-1.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:34211ebb05c6e4723c20c94c46e467a60f444365b17d659e13d3e8000f39e99a", size = 774243, upload-time = "2026-08-25T13:55:09.932Z" },
 ]
 
 [[package]]
 name = "intel-sycl-rt"
-version = "2026.1.0"
+version = "2026.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "intel-cmplr-lib-rt" },
@@ -625,8 +625,8 @@ dependencies = [
     { name = "intel-cmplr-lic-rt" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5b/9d/b183c4bdc59921b0e15006fb301b278d998abd5dc803051478de32da3476/intel_sycl_rt-2026.1.0-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:c8f4ae787c334d6a48b66514b2ac29c7bb4aedde2939c8ba61e7370ca748fce6", size = 134083467, upload-time = "2026-07-01T15:14:53.354Z" },
-    { url = "https://files.pythonhosted.org/packages/c8/0a/e39270bde66bedc4aa68fb0f9cd23f7e251d007cf1a6552441475b4cc890/intel_sycl_rt-2026.1.0-py2.py3-none-win_amd64.whl", hash = "sha256:307d7022583d929e3091eadcea15fd3440fb68c35cd20094f2bf8597f936bfd9", size = 58022055, upload-time = "2026-07-01T15:10:16.218Z" },
+    { url = "https://files.pythonhosted.org/packages/80/3c/f8ef51b3d21eb1b2e7d1b302877d3354bbe3a0e728c5a8c4f9b7ff080957/intel_sycl_rt-2026.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:9f4c9aff11177a29ff81bcecffd47e43b1edf54b766f97ed1dac13a820b649e6", size = 134125494, upload-time = "2026-09-05T10:34:51.517Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/dc/4e417cda4969522bd4f8436044eeb016feeb9fb8ebdb0b72cd8e185d6798/intel_sycl_rt-2026.1.2-py2.py3-none-win_amd64.whl", hash = "sha256:7f1f3d92adeb135b6129bbe6f7d939c0416e584594d038213a74fb56237e619a", size = 58045742, upload-time = "2026-09-05T10:34:59.085Z" },
 ]
 
 [[package]]
@@ -1287,25 +1287,25 @@ wheels = [
 
 [[package]]
 name = "oneccl"
-version = "2022.1.1"
+version = "2022.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "impi-rt" },
     { name = "intel-sycl-rt" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1c/c0/54bf02d28010584627de21af467ee34026e231528e5141069080805076d4/oneccl-2022.1.1-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:e877ad3720e8d6dd45d71cf05dd9d65e66f5a38c0900089f1542569e43512e78", size = 84632372, upload-time = "2026-07-15T16:11:12.108Z" },
+    { url = "https://files.pythonhosted.org/packages/56/31/c0b03d6ed8cda5ad9a4de065e9e5da0eb1e8e5b5fa1b23a10d6f3a6ebed4/oneccl-2022.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:c87c28fcce5435b03b8f01f3e669ab3ec59718f28f9ab537403b49efe83f4c16", size = 84153939, upload-time = "2026-08-25T10:32:50.376Z" },
 ]
 
 [[package]]
 name = "oneccl-devel"
-version = "2022.1.1"
+version = "2022.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "oneccl" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d5/c1/a62b38dec8add789fae282fcdaaebbb1bf55db32922fcd2fb42f8523cdc1/oneccl_devel-2022.1.1-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:a088ba67a3610bdb621b82335953ceb4bda65b81146a306a1bb3c64e47d47735", size = 29018971, upload-time = "2026-07-15T16:11:17.091Z" },
+    { url = "https://files.pythonhosted.org/packages/e9/6b/df3454051871ad3e3ff5bd9e00bf3004d76480c49c3a554f5c004927727f/oneccl_devel-2022.1.2-py2.py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:bdf97644da971fc112b6bd53d6e22e8ff032fb8f32442bb914e98727442c229d", size = 28861617, upload-time = "2026-08-25T10:32:59.717Z" },
 ]
 
 [[package]]
@@ -1621,11 +1621,11 @@ wheels = [
 
 [[package]]
 name = "pyzes"
-version = "0.1.2"
+version = "0.1.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f9/da/c40076150353b25d4b23ecf99486781feb54d55059f272d4ea1efe4cc8a7/pyzes-0.1.2.tar.gz", hash = "sha256:21667f0a23b15fcf81c1267dbc86f5a9b0d5118297cae645e4ab31c50e9e7d6b", size = 32567, upload-time = "2026-06-12T08:48:20.076Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3b/8e/13937881d765affa0d7194fe424cd8cccd848dfd0c8099c0814f57d44743/pyzes-0.1.3.tar.gz", hash = "sha256:e9c617096551beb2cec0cd8714ccc641c39ea3fe2ff41575234c218e9bd5f874", size = 33743, upload-time = "2026-10-13T14:39:07.247Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/74/46/90e1741b3926e3b8590dfaa819439891865568fc5c90a0f5596b76ee6bff/pyzes-0.1.2-py3-none-any.whl", hash = "sha256:5638684399049940414071afafff91ee87f18807457b3cb0d31cd5d5a0b7db23", size = 30809, upload-time = "2026-06-12T08:48:19.126Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/96/90c5794cb26d046b3c0958551117ab7305cac9b61140f096d2289066269e/pyzes-0.1.3-py3-none-any.whl", hash = "sha256:61e3f45d85f97e11de5a6714d29f1813fe9454cd650a10f600eb61de6dbdc518", size = 31247, upload-time = "2026-10-13T14:39:06.271Z" },
 ]
 
 [[package]]
@@ -1959,7 +1959,7 @@ wheels = [
 
 [[package]]
 name = "torch"
-version = "2.14.0"
+version = "2.15.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "sys_platform != 'linux' and sys_platform != 'win32'",
@@ -1974,12 +1974,12 @@ dependencies = [
     { name = "typing-extensions" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/40/0db773452c2a62b37761d3f418acf933d381f9e87077036fb57c2a386c37/torch-2.14.0-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:9d4b1022a5d9b71282ec67ad0d9e7235870096b8a246dc1c32d6ea1fc83dc998", size = 127311393, upload-time = "2026-09-02T13:43:59.607Z" },
+    { url = "https://files.pythonhosted.org/packages/87/fa/efeb85d3ba1d8ef497664db5358ac72a7d1d0f1d8a8ad487cba89753f279/torch-2.15.0-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:fbefd73b521d3c75c5a1d7c77056b2c6339b81468d14d4e33c55f525418a5855", size = 138556890, upload-time = "2026-10-28T15:16:45.195Z" },
 ]
 
 [[package]]
 name = "torch"
-version = "2.14.1+xpu"
+version = "2.15.0+xpu"
 source = { registry = "https://download.pytorch.org/whl/xpu" }
 resolution-markers = [
     "sys_platform == 'linux' or sys_platform == 'win32'",
@@ -2017,24 +2017,8 @@ dependencies = [
     { name = "umf" },
 ]
 wheels = [
-    { url = "https://download-r2.pytorch.org/whl/xpu/torch-2.14.1%2Bxpu-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:295895837be1b34a0f513e18e0bca00beb28a85daee73ec27734a866dd96ca31", upload-time = "2026-09-30T22:02:54Z" },
-    { url = "https://download-r2.pytorch.org/whl/xpu/torch-2.14.1%2Bxpu-cp313-cp313-win_amd64.whl", hash = "sha256:1427880161b8065892e757dbd86c6df71b12e1f90ce3cb44c2b746fa584a00d3", upload-time = "2026-09-30T22:03:38Z" },
-]
-
-[[package]]
-name = "torchvision"
-version = "0.29.0"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "sys_platform != 'linux' and sys_platform != 'win32'",
-]
-dependencies = [
-    { name = "numpy" },
-    { name = "pillow" },
-    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" } },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/56/4e122b6b59269cb2e6a8f7ef969cff7b1eca1499c48784805ad156d3720b/torchvision-0.29.0-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:28a3964a9e6db34354d4ca440d2c2038deeef24e7219e8d6f49d9d174f44830c", size = 1813739, upload-time = "2026-09-02T13:47:08.63Z" },
+    { url = "https://download-r2.pytorch.org/whl/xpu/torch-2.15.0%2Bxpu-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:44347b554ff6d200859d7f23656c15c48736837c542851ab5b18b2db7fef2586", upload-time = "2026-10-28T18:00:57Z" },
+    { url = "https://download-r2.pytorch.org/whl/xpu/torch-2.15.0%2Bxpu-cp313-cp313-win_amd64.whl", hash = "sha256:bb878319e82da2ebc7098bbbbb540f31fd2b4834cb465d2f65cb595267b61166", upload-time = "2026-10-28T18:01:37Z" },
 ]
 
 [[package]]
@@ -2047,11 +2031,27 @@ resolution-markers = [
 dependencies = [
     { name = "numpy" },
     { name = "pillow" },
-    { name = "torch", version = "2.14.1+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" } },
+    { name = "torch", version = "2.15.0+xpu", source = { registry = "https://download.pytorch.org/whl/xpu" } },
 ]
 wheels = [
     { url = "https://download-r2.pytorch.org/whl/xpu/torchvision-0.29.1%2Bxpu-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:7bb82cf8fbce7f86b6ce2f64734d4eae9de8dc2add2af243938087f6411efe4f", upload-time = "2026-09-30T15:46:46Z" },
     { url = "https://download-r2.pytorch.org/whl/xpu/torchvision-0.29.1%2Bxpu-cp313-cp313-win_amd64.whl", hash = "sha256:4290142e57f92f381a1f636c666a928c97353e4d529e6379e9f7ae2fc074bb46", upload-time = "2026-09-30T15:46:46Z" },
+]
+
+[[package]]
+name = "torchvision"
+version = "0.29.2"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "sys_platform != 'linux' and sys_platform != 'win32'",
+]
+dependencies = [
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "torch", version = "2.15.0", source = { registry = "https://pypi.org/simple" } },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/60/ec/ce97c46e5322b588b95be388f2c21878d014ca20838478e7aab59edd128a/torchvision-0.29.2-py3-none-macosx_14_0_arm64.whl", hash = "sha256:d412494ff011f24c884a3cffd33eba1cb45a0299d4e26c1e175113f9d3b3ebc7", size = 1823414, upload-time = "2026-10-28T15:21:31.892Z" },
 ]
 
 [[package]]
@@ -2119,14 +2119,14 @@ wheels = [
 
 [[package]]
 name = "triton-xpu"
-version = "3.8.0"
+version = "3.9.0"
 source = { registry = "https://download.pytorch.org/whl/xpu" }
 dependencies = [
     { name = "pyelftools" },
 ]
 wheels = [
-    { url = "https://download-r2.pytorch.org/whl/triton_xpu-3.8.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:879b027304e617911a9d8728a4cc0e31512f3ccbafdcd07dba573bdd60cfb085", upload-time = "2026-09-02T01:11:03Z" },
-    { url = "https://download-r2.pytorch.org/whl/triton_xpu-3.8.0-cp313-cp313-win_amd64.whl", hash = "sha256:474fe1befdfdd0733cd5415899d9e3891996860c0d86efb459bb4c7bf3d122df", upload-time = "2026-09-02T01:11:14Z" },
+    { url = "https://download-r2.pytorch.org/whl/triton_xpu-3.9.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:9111947061f26eae582becc075e7d2c6c8f7895fabe0dfd506a03a50a6af1dc7", upload-time = "2026-10-28T11:50:28Z" },
+    { url = "https://download-r2.pytorch.org/whl/triton_xpu-3.9.0-cp313-cp313-win_amd64.whl", hash = "sha256:d59ebd92cdd1c16495ba654560f5203ddcfb21972bc098b36974d7fe89370041", upload-time = "2026-10-28T11:50:43Z" },
 ]
 
 [[package]]
